@@ -1,0 +1,5 @@
+---
+# tasks file for kubeadm
+
+- name: Test
+  ansible.builtin.command: "echo Hello"
