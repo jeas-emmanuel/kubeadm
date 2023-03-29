@@ -1,2 +1,2 @@
 # kubeadm
-Role sensible to deploy kubeadm cluster
+Ansible role to deploy kubeadm cluster
