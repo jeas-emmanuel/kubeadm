@@ -1,0 +1,40 @@
+---
+- name: Ensure necessary system packages are installed
+  become: true
+  ansible.builtin.package:
+    name: "{{ kubeadm_sys_pkg }}"
+    state: present
+    update_cache: true
+  loop: "{{ kubeadm_system_package }}"
+  loop_control:
+    loop_var: kubeadm_sys_pkg
+
+- name: Google APT repository
+  become: true
+  block:
+    - name: Add Google signing key
+      ansible.builtin.apt_key:
+        url: "{{ kubeadm_google_signing_key_url }}"
+        state: present
+    - name: Add Google apt repository
+      ansible.builtin.apt_repository:
+        repo: "{{ kubeadm_k8s_apt_repo }}"
+        state: present
+        update_cache: true
+
+- name: Ensure kubeadm, kubelet and kubectl are installed
+  become: true
+  ansible.builtin.package:
+    name: "{{ kubeadm_pkg }}"
+    state: present
+  loop: "{{ kubeadm_packages }}"
+  loop_control:
+    loop_var: kubeadm_pkg
+
+- name: Mark kubeadm, kubelet and kubectl packages
+  ansible.builtin.dpkg_selections:
+    name: "{{ kubeadm_pkg | split('=') | first | lower }}"
+    selection: hold
+  loop: "{{ kubeadm_packages }}"
+  loop_control:
+    loop_var: kubeadm_pkg

@@ -1,2 +1,14 @@
 ---
 # handlers file for kubeadm
+- name: Load module
+  community.general.modprobe:
+    name: "{{ kubeadm_network_mod }}"
+    state: present
+  loop: "{{ kubeadm_network_modules }}"
+  loop_control:
+    loop_var: kubeadm_network_mod
+
+- name: Sysctl params
+  ansible.builtin.command:
+    cmd: sysctl --system
+  changed_when: false

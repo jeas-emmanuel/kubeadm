@@ -1,0 +1,5 @@
+{% if kubeadm_network_modules is defined and kubeadm_network_modules | length > 0 %}
+{% for module in kubeadm_network_modules %}
+{{ module }}
+{% endfor %}
+{% endif %}

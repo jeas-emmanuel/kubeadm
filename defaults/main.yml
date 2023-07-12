@@ -1,2 +1,165 @@
 ---
 # defaults file for kubeadm
+kubeadm_system_package:
+  - apt-transport-https
+  - ca-certificates
+  - curl
+
+kubeadm_packages:
+  - kubeadm=1.27.3-00
+  - kubelet=1.27.3-00
+  - kubectl=1.27.3-00
+
+kubeadm_network_modules:
+  - overlay
+  - br_netfilter
+
+kubeadm_network_parameters:
+  - key: net.bridge.bridge-nf-call-iptables
+    value: 1
+  - key: net.bridge.bridge-nf-call-ip6tables
+    value: 1
+  - key: net.ipv4.ip_forward
+    value: 1
+
+kubeadm_google_signing_key_url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+kubeadm_google_signing_key: "/etc/apt/keyrings/kubernetes-archive-keyring.gpg"
+
+kubeadm_k8s_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+kubeadm_k8s_apt_repo_file: "/etc/apt/sources.list.d/kubernetes.list"
+
+kubeadm_config_apiversion: kubeadm.k8s.io/v1beta3
+kubeadm_config_kind_init: InitConfiguration
+kubeadm_config_kind_cluster: ClusterConfiguration
+kubeadm_config_kind_kubelet: KubeletConfiguration
+kubeadm_config_kind_kubeproxy: KubeProxyConfiguration
+kubeadm_config_kind_join: JoinConfiguration
+
+kubeadm_use_config_file: true
+kubeadm_config_file: /tmp/kubeadm-config.yaml
+
+kubeadm_config:
+  bootstrap_tokens:
+    - token: "783bde.3f89s0fje9f38fhf"
+      description: "kubeadm bootstrap token"
+      ttl: "24h"
+      usages:
+        - signing
+        - authentication
+      groups:
+        - system:bootstrappers:kubeadm:default-node-token
+  control_plane_registration_options:
+    taints:
+      - key: "kubeadmNode"
+        value: "value1"
+        effect: "NoSchedule"
+    kubelet_extra_args: []
+    ignore_preflight_errors:
+      - IsPrivilegedUser
+      - Swap
+    image_pull_policy: ifNotPresent
+  skip_phases: []
+
+  apiserver_advertise_address: ''
+  apiserver_bind_port: 6443
+  apiserver_cert_extra_sans: ''
+  cert_dir: "/etc/kubernetes/pki"
+  certificate_key: ''
+  control_plane_endpoint: ''
+  cri_socket: /var/run/containerd/containerd.sock
+  dry_run: ''
+  feature_gates: ''
+  ignore_preflight_errors: ''
+  image_repository: "registry.k8s.io"
+  kubernetes_version: 'stable-1'
+  node_name: ''
+  pod_network_cidr: "10.96.0.0/12"
+  service_cidr: '"10.36.0.0/12'
+  service_dns_domain: "cluster.local"
+  skip_certificate_key_print: ''
+  skip_token_print: ''
+  token_token_ttl: ''
+  upload_certs: ''
+
+kubeadm_init_phase_flags:
+  dry_run: false
+  config: ''
+
+kubeadm_init_preflight:
+  enable: true
+  flags:
+    dry_run: false
+    config: ''
+    ignore_preflight_errors:
+      - IsPrivilegedUser
+      - Swap
+
+kubeadm_init_certs:
+  enable: true
+  all: false
+  subcommand:
+    - cmd: ca
+      enable: true
+    - cmd: apiserver
+      enable: true
+    - cmd: apiserver-kubelet-client
+      enable: true
+    - cmd: front-proxy-ca
+      enable: true
+    - cmd: etcd-ca
+      enable: true
+    - cmd: etcd-server
+      enable: true
+    - cmd: etcd-peer
+      enable: true
+    - cmd: healthcheck-client
+      enable: true
+    - cmd: apiserver-etcd-client
+      enable: true
+    - cmd: sa
+      enable: true
+
+kubeadm_init_phase:
+  - name: preflight
+    options: []
+  - name: kubelet-start
+    options: []
+
+  # - name: certs
+  #   options:
+  #     - certs
+  #     - all
+  #     - ca
+  #     - apiserver
+  #     - apiserver-kubelet-client
+  #     - front-proxy-ca
+  #     - etcd-ca
+  #     - etcd-server
+  #     - etcd-peer
+  #     - healthcheck-client
+  #     - apiserver-etcd-client
+  #     - sa
+
+kubeadm_init_config:
+  apiserver_advertise_address: ''
+  apiserver_bind_port: 6443
+  apiserver_cert_extra_sans: ''
+  cert_dir: /etc/kubernetes/pki
+  certificate_key: ''
+  control_plane_endpoint: ''
+  cri_socket: ''
+  dry_run: false
+  feature_gates: ''
+  ignore_preflight_errors: ''
+  image_repositoriy: registry.k8s.io
+  kubernetes_version: stable-1
+  node_name: ''
+  pod_network_cidr: 192.168.0.0/16
+  service_cidr: 10.96.0.0/12
+  service_dns_domain: cluster.local
+  skip_certificate_key: true
+  skip_phases: []
+  skip_token_print: true
+  token: ''
+  token_ttl: ''
+  upload_certs: true

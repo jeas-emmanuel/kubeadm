@@ -1,0 +1,92 @@
+---
+- name: Preflight checks
+  ansible.builtin.include_tasks: deploy/preflight-checks.yml
+  when: kubeadm_init_preflight.enable
+
+- name: Certificates generation
+  ansible.builtin.include_tasks: deploy/certs.yml
+  when: kubeadm_init_certs.enable
+
+# - name: Check if kubeadm component's configuration file exists
+#   ansible.builtin.stat:
+#     path: "{{ kubeadm_component_conf_file }}"
+#   loop: "{{ kubeadm_component_configration_files }}"
+#   loop_control:
+#     loop_var: kubeadm_component_conf_file
+#   register: _result
+
+# - name: Kubeadm init control plane node
+#   vars:
+#     query: "results[?to_string(stat.exists)=='true'].stat.exists"
+#   when: _result | json_query(query) |length != kubeadm_component_configration_files | length
+#   ansible.builtin.command:
+#     cmd: |
+#       kubeadm init
+#       {% if kubeadm_init_config.apiserver_advertise_address is defined and kubeadm_init_config.apiserver_advertise_address | length > 0 %}
+#       --apiserver-advertise-address {{ kubeadm_init_config.apiserver_advertise_address }}
+#       {% endif %}
+#       {% if kubeadm_init_config.apiserver_bind_port is defined %}
+#       --apiserver-bind-port {{ kubeadm_init_config.apiserver_bind_port }}
+#       {% endif %}
+#       {% if kubeadm_init_config.apiserver_cert_extra_sans is defined and kubeadm_init_config.apiserver_cert_extra_sans | length > 0 %}
+#       --apiserver-cert-extra-sans {{ kubeadm_init_config.apiserver_cert_extra_sans }}
+#       {% endif %}
+#       {% if kubeadm_init_config.cert_dir is defined and kubeadm_init_config.cert_dir | length > 0 %}
+#       --cert-dir {{ kubeadm_init_config.cert_dir }}
+#       {% endif %}
+#       {% if kubeadm_init_config.certificate_key is defined and kubeadm_init_config.certificate_key | length > 0 %}
+#       --certificate-key {{ kubeadm_init_config.certificate_key }}
+#       {% endif %}
+#       {% if kubeadm_init_config.control_plane_endpoint is defined and kubeadm_init_config.control_plane_endpoint | length > 0 %}
+#       --control-plane-endpoint {{ kubeadm_init_config.control_plane_endpoint }}
+#       {% endif %}
+#       {% if kubeadm_init_config.cri_socket is defined and kubeadm_init_config.cri_socket | length > 0 %}
+#       --cri-socket {{ kubeadm_init_config.cri_socket }}
+#       {% endif %}
+#       {% if kubeadm_init_config.dry_run is defined and kubeadm_init_config.dry_run | bool %}
+#       --dry-run
+#       {% endif %}
+#       {% if kubeadm_init_config.feature_gates is defined and kubeadm_init_config.feature_gates | length > 0 %}
+#       --feature-gates {{ kubeadm_init_config.feature_gates }}
+#       {% endif %}
+#       {% if kubeadm_init_config.ignore_preflight_errors is defined and kubeadm_init_config.ignore_preflight_errors | length > 0 %}
+#       --ignore-preflight-errors {{ kubeadm_init_config.ignore_preflight_errors }}
+#       {% endif %}
+#       {% if kubeadm_init_config.image_repositoriy is defined and kubeadm_init_config.image_repositoriy | length > 0 %}
+#       --image-repository {{ kubeadm_init_config.image_repositoriy }}
+#       {% endif %}
+#       {% if kubeadm_init_config.kubernetes_version is defined and kubeadm_init_config.kubernetes_version | length > 0 %}
+#       --kubernetes-version {{ kubeadm_init_config.kubernetes_version }}
+#       {% endif %}
+#       {% if kubeadm_init_config.node_name is defined and kubeadm_init_config.node_name | length > 0 %}
+#       --node-name {{ kubeadm_init_config.node_name }}
+#       {% endif %}
+#       {% if kubeadm_init_config.pod_network_cidr is defined and kubeadm_init_config.pod_network_cidr | length > 0 %}
+#       --pod-network-cidr {{ kubeadm_init_config.pod_network_cidr }}
+#       {% endif %}
+#       {% if kubeadm_init_config.service_cidr is defined and kubeadm_init_config.service_cidr | length > 0 %}
+#       --service-cidr {{ kubeadm_init_config.service_cidr }}
+#       {% endif %}
+#       {% if kubeadm_init_config.service_dns_domain is defined and kubeadm_init_config.service_dns_domain | length > 0 %}
+#       --service-dns-domain {{ kubeadm_init_config.service_dns_domain }}
+#       {% endif %}
+#       {% if kubeadm_init_config.skip_certificate_key is defined and kubeadm_init_config.skip_certificate_key | bool %}
+#       --skip-certificate-key-print
+#       {% endif %}
+#       {% if kubeadm_init_config.skip_phases is defined and kubeadm_init_config.skip_phases | bool %}
+#       --skip-phases {{ kubeadm_init_config.skip_phases }}
+#       {% endif %}
+#       {% if kubeadm_init_config.skip_token_print is defined and kubeadm_init_config.skip_token_print | bool %}
+#       --skip-token-print
+#       {% endif %}
+#       {% if kubeadm_init_config.token is defined and kubeadm_init_config.token | length > 0 %}
+#       --token {{ kubeadm_init_config.token }}
+#       {% endif %}
+#       {% if kubeadm_init_config.token_ttl is defined and kubeadm_init_config.token_ttl | length > 0 %}
+#       --token-ttl duration {{ kubeadm_init_config.token_ttl }}
+#       {% endif %}
+#       {% if kubeadm_init_config.upload_certs is defined and kubeadm_init_config.upload_certs | bool %}
+#       --upload-certs
+#       {% endif %}
+#   changed_when: "'Your Kubernetes control-plane has initialized successfully!' in _result.stdout"
+#   register: _result

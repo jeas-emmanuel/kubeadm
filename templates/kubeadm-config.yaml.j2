@@ -1,0 +1,74 @@
+---
+{% if 'control_planes' in group_names %}
+apiVersion: {{ kubeadm_config_apiversion }}
+kind: {{ kubeadm_config_kind_init }}
+{% if kubeadm_config.bootstrap_tokens | length > 0 %}
+{% for token in kubeadm_config.bootstrap_tokens %}
+bootstrapTokens:
+{% if token.token | length > 0 %}
+  - token: {{ token.token }}
+    description: {{ token.description }}
+{% endif %}
+{% if token.usages is defined and token.usages | length > 0 %}
+    usages:
+{% for usage in token.usages %}
+      - {{ usage }}
+{% endfor %}
+{% endif %}
+{% if token.groups is defined and token.groups | length > 0 %}
+    groups:
+{% for group in token.groups %}
+      - {{ group }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+{% endif %}
+nodeRegistrations:
+  name: {{ ansible_hostname }}
+{% if kubeadm_config.cri_socket is defined and kubeadm_config.cri_socket | length > 0 %}
+  criSocket: {{ kubeadm_config.cri_socket }}
+{% endif %}
+{% if kubeadm_config.control_plane_registration_options.taints is defined and kubeadm_config.control_plane_registration_options.taints | length > 0 %}
+  taints:
+{% for taint in kubeadm_config.control_plane_registration_options.taints %}
+    - key: {{ taint.key }}
+      value: {{ taint. value }}
+      effect: {{ taint.effect }}
+{% endfor %}
+{% endif %}
+{% if kubeadm_config.control_plane_registration_options.kubelet_extra_args is defined and kubeadm_config.control_plane_registration_options.kubelet_extra_args | length > 0 %}
+  kubeletExtraArgs: {{ kubeadm_config.control_plane_registration_options.kubelet_extra_args }}
+{% endif %}
+{% if kubeadm_config.control_plane_registration_options.ignore_preflight_errors is defined and kubeadm_config.control_plane_registration_options.ignore_preflight_errors | length > 0 %}
+  ignorePreflightErrors:
+{% for ign_error in kubeadm_config.control_plane_registration_options.ignore_preflight_errors %}
+    - {{ ign_error }}
+{% endfor %}
+{% endif %}
+{% if kubeadm_config.control_plane_registration_options.skip_phases is defined and kubeadm_config.control_plane_registration_options.skip_phases | length > 0 %}
+  skipPhases: {{ kubeadm_config.control_plane_registration_options.skip_phases }}
+{% endif %}
+localAPIEndpoint:
+  advertiseAddress: {{ kubeadm_config.apiserver_advertise_address }}
+  bindPort: {{ kubeadm_config.apiserver_bind_port }}
+{% if kubeadm_config.control_plane_registration_options.skip_phases is defined and kubeadm_config.control_plane_registration_options.skip_phases | length > 0 %}
+  skipPhases: {{ kubeadm_config.control_plane_registration_options.skip_phases }}
+{% endif %}
+{% endif %}
+---
+apiVersion: {{ kubeadm_config_apiversion }}
+kind: {{ kubeadm_config_kind_cluster }}
+
+---
+apiVersion: {{ kubeadm_config_apiversion }}
+kind: {{ kubeadm_config_kind_kubelet }}
+
+---
+apiVersion: {{ kubeadm_config_apiversion }}
+kind: {{ kubeadm_config_kind_kubeproxy }}
+
+{% if 'nodes' in group_names %}
+---
+apiVersion: {{ kubeadm_config_apiversion }}
+kind: {{ kubeadm_config_kind_join }}
+{% endif %}

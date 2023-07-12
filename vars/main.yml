@@ -1,2 +1,28 @@
 ---
 # vars file for kubeadm
+kubeadm_compatible_os_distros:
+  - debian
+  - redhat
+
+kubeadm_hardwares_min_requirements:
+  ram: 2
+  cpu: 2
+
+kubeadm_kubelet_dir: /var/lib/kubelet
+kubeadm_manifests_dir: /etc/kubernetes/manifests
+kubeadm_pki_dir: "{{ kubeadm_init_config.cert_dir | default('/etc/kubernetes/pki') }}"
+
+kubeadm_component_configration_files:
+  - "{{ kubeadm_manifests_dir }}/kube-apiserver.yaml"
+  - "{{ kubeadm_manifests_dir }}/kube-controller-manager.yaml"
+  - "{{ kubeadm_manifests_dir }}/kube-scheduler.yaml"
+  - "{{ kubeadm_manifests_dir }}/etcd.yaml"
+
+kubeadm_etcd_dir: "/var/lib/etcd"
+
+kubeadm_init_config_file:
+  - /etc/kubernetes/admin.conf
+  - /etc/kubernetes/kubelet.conf
+  - /etc/kubernetes/bootstrap-kubelet.conf
+  - /etc/kubernetes/controller-manager.conf
+  - /etc/kubernetes/scheduler.conf

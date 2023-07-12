@@ -1,0 +1,17 @@
+---
+- name: Ensure machines are running deb/rpm-compatible Linux os
+  ansible.builtin.assert:
+    that:
+      - "'{{ ansible_os_family | lower }}' in {{ kubeadm_compatible_os_distros }}"
+
+- name: Ensure machines have minimum hardwares requirements
+  ansible.builtin.assert:
+    that:
+      - "{{ ansible_memtotal_mb }} >= {{ kubeadm_hardwares_min_requirements.ram }}"
+      - "{{ ansible_processor_vcpus }} >= {{ kubeadm_hardwares_min_requirements.cpu }}"
+
+- name: Disable Swapping
+  become: true
+  ansible.builtin.command:
+    cmd: swapoff -a
+  changed_when: false

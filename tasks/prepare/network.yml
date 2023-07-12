@@ -1,0 +1,21 @@
+---
+- name: Configure network
+  become: true
+  ansible.builtin.template:
+    src: "{{ item.src }}"
+    dest: "{{ item.dest }}"
+    mode: '0644'
+  with_items:
+    - { src: mod-k8s.conf.j2, dest: /etc/modules-load.d/k8s.conf }
+    - { src: sys-k8s.conf.j2, dest: /etc/sysctl.d/k8s.conf }
+  notify:
+    - Load module
+    - Sysctl params
+
+- name: Check if k8s modules are loaded
+  community.general.modprobe:
+    name: "{{ kubeadm_network_mod }}"
+    state: present
+  loop: "{{ kubeadm_network_modules }}"
+  loop_control:
+    loop_var: kubeadm_network_mod

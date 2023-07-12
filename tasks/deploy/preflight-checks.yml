@@ -1,0 +1,14 @@
+---
+- name: Run kubeadm preflight check phase
+  ansible.builtin.command:
+    cmd: |
+      kubeadm init phase preflight
+      {% if kubeadm_init_preflight.flags.config | length > 0 %}
+      --config {{ kubeadm_init_preflight.flags.config }}
+      {% endif %}
+      {% if kubeadm_init_preflight.flags.dry_run %}
+      --dry-run
+      {% endif %}
+      --ignore-preflight-errors={{ kubeadm_init_preflight.flags.ignore_preflight_errors | join(',') }}
+  changed_when: false
+  register: _result

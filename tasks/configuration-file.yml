@@ -1,0 +1,6 @@
+---
+- name: Generate kubeadm configuration's file template
+  ansible.builtin.template:
+    src: kubeadm-config.yaml.j2
+    dest: "{{ kubeadm_config_file }}"
+    mode: "0644"

@@ -1,0 +1,5 @@
+{% if kubeadm_network_parameters is defined and kubeadm_network_parameters | length > 0 %}
+{% for parameter in kubeadm_network_parameters %}
+{{ parameter.key }} = {{ parameter.value }}
+{% endfor %}
+{% endif %}
