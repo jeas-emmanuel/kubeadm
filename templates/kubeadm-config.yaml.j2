@@ -1,13 +1,26 @@
 ---
+{% macro display_list(list) -%}
+{% for element in list %}
+{% if element.value | type_debug == "list" %}
+      {{ element.key }}:
+{% for value in element.value %}
+        - {{ value }}
+{% endfor %}
+{% elif element.value is string or element.value | int != 0 %}
+      {{ element.key }}: "{{ element.value }}"
+{%- endif -%}
+{% endfor %}
+{%- endmacro -%}
 {% if 'control_planes' in group_names %}
 apiVersion: {{ kubeadm_config_apiversion }}
 kind: {{ kubeadm_config_kind_init }}
-{% if kubeadm_config.bootstrap_tokens | length > 0 %}
-{% for token in kubeadm_config.bootstrap_tokens %}
+{% if kubeadm_config.tokens | length > 0 %}
+{% for token in kubeadm_config.tokens %}
 bootstrapTokens:
 {% if token.token | length > 0 %}
-  - token: {{ token.token }}
-    description: {{ token.description }}
+  - token: "{{ token.token }}"
+    description: "{{ token.description }}"
+    ttl: "{{ token.ttl }}"
 {% endif %}
 {% if token.usages is defined and token.usages | length > 0 %}
     usages:
@@ -23,41 +36,109 @@ bootstrapTokens:
 {% endif %}
 {% endfor %}
 {% endif %}
-nodeRegistrations:
-  name: {{ ansible_hostname }}
+nodeRegistration:
+  name: "{{ ansible_hostname }}"
 {% if kubeadm_config.cri_socket is defined and kubeadm_config.cri_socket | length > 0 %}
-  criSocket: {{ kubeadm_config.cri_socket }}
+  criSocket: "{{ kubeadm_config.cri_socket }}"
 {% endif %}
-{% if kubeadm_config.control_plane_registration_options.taints is defined and kubeadm_config.control_plane_registration_options.taints | length > 0 %}
+{% if kubeadm_config.taints is defined and kubeadm_config.taints | length > 0 %}
   taints:
-{% for taint in kubeadm_config.control_plane_registration_options.taints %}
-    - key: {{ taint.key }}
-      value: {{ taint. value }}
-      effect: {{ taint.effect }}
+{% for taint in kubeadm_config.taints %}
+    - key: "{{ taint.key }}"
+      value: "{{ taint. value }}"
+      effect: "{{ taint.effect }}"
 {% endfor %}
 {% endif %}
-{% if kubeadm_config.control_plane_registration_options.kubelet_extra_args is defined and kubeadm_config.control_plane_registration_options.kubelet_extra_args | length > 0 %}
-  kubeletExtraArgs: {{ kubeadm_config.control_plane_registration_options.kubelet_extra_args }}
+{% if kubeadm_config.kubelet_extra_args is defined and kubeadm_config.kubelet_extra_args | length > 0 %}
+  kubeletExtraArgs:
+{{ display_list(kubeadm_config.kubelet_extra_args) }}
 {% endif %}
-{% if kubeadm_config.control_plane_registration_options.ignore_preflight_errors is defined and kubeadm_config.control_plane_registration_options.ignore_preflight_errors | length > 0 %}
+{% if kubeadm_config.ignore_preflight_errors is defined and kubeadm_config.ignore_preflight_errors | length > 0 %}
   ignorePreflightErrors:
-{% for ign_error in kubeadm_config.control_plane_registration_options.ignore_preflight_errors %}
+{% for ign_error in kubeadm_config.ignore_preflight_errors %}
     - {{ ign_error }}
 {% endfor %}
 {% endif %}
-{% if kubeadm_config.control_plane_registration_options.skip_phases is defined and kubeadm_config.control_plane_registration_options.skip_phases | length > 0 %}
-  skipPhases: {{ kubeadm_config.control_plane_registration_options.skip_phases }}
+{% if  kubeadm_config.image_pull_policy is defined and  kubeadm_config.image_pull_policy | length > 0 %}
+  imagePullPolicy: "{{ kubeadm_config.image_pull_policy }}"
+{% endif%}
+{% if kubeadm_config.skip_phases is defined and kubeadm_config.skip_phases | length > 0 %}
+  skipPhases: {{ kubeadm_config.skip_phases }}
 {% endif %}
 localAPIEndpoint:
-  advertiseAddress: {{ kubeadm_config.apiserver_advertise_address }}
+  advertiseAddress: {{ (kubeadm_config.apiserver_advertise_address is defined) | ternary(kubeadm_config.apiserver_advertise_address, ansible_default_ipv4.address) }}
+{% if kubeadm_config.apiserver_bind_port is defined %}
   bindPort: {{ kubeadm_config.apiserver_bind_port }}
-{% if kubeadm_config.control_plane_registration_options.skip_phases is defined and kubeadm_config.control_plane_registration_options.skip_phases | length > 0 %}
-  skipPhases: {{ kubeadm_config.control_plane_registration_options.skip_phases }}
+{% endif %}
+{% if kubeadm_config.skip_phases is defined and kubeadm_config.skip_phases | length > 0 %}
+  skipPhases:
+{% for skip_phase in kubeadm_config.skip_phases %}
+    - {{ skip_phase }}
+{% endfor %}
+{% endif %}
+{% if kubeadm_upload_certs and kubeadm_config.certificate_key | length > 0 %}
+certificateKey: "{{ kubeadm_config.certificate_key }}"
 {% endif %}
 {% endif %}
+
 ---
 apiVersion: {{ kubeadm_config_apiversion }}
 kind: {{ kubeadm_config_kind_cluster }}
+{% if kubeadm_config.local_etcd is defined and kubeadm_config.local_etcd | length > 0 %}
+etcd:
+  local:
+    imageRepository: "{{ kubeadm_config.local_etcd.image_repo }}"
+    imageTag: "{{ kubeadm_config.local_etcd.image_tag }}"
+    dataDir: "{{ kubeadm_config.local_etcd.data_dir }}"
+    extraArgs:
+{{ display_list(kubeadm_config.local_etcd.extra_args) }}
+{% if kubeadm_config.local_etcd.server_cert_sans is defined and kubeadm_config.local_etcd.server_cert_sans | length > 0 %}
+  serverCertSANs:
+{% for server_cert_san in kubeadm_config.local_etcd.server_cert_sans %}
+    - "{{ server_cert_san }}"
+{% endfor %}
+{% endif %}
+{% if kubeadm_config.local_etcd.peer_cert_sans is defined and kubeadm_config.local_etcd.peer_cert_sans | length > 0 %}
+  peerCertSANs:
+{% for peer_cert_san in kubeadm_config.local_etcd.peer_cert_sans %}
+    - "{{ peer_cert_san }}"
+{% endfor %}
+{% endif %}
+{% if kubeadm_config.external_etcd is defined and kubeadm_config.external_etcd | length > 0 %}
+  external:
+{% if kubeadm_config.external_etcd.endpoints is defined and kubeadm_config.external_etcd.endpoints | length > 0 %}
+    endpoints:
+{% for endpoint in kubeadm_config.external_etcd.endpoints %}
+      - "{{ endpoint }}"
+{% endfor %}
+{% endif %}
+{% endif %}
+{% if kubeadm_config.external_etcd.ca_file is defined and kubeadm_config.external_etcd.ca_file | length > 0 %}
+    caFile: "{{ kubeadm_config.external_etcd.ca_file }}"
+{% endif %}
+{% if kubeadm_config.external_etcd.cert_file is defined and kubeadm_config.external_etcd.cert_file | length > 0 %}
+    certFile: "{{ kubeadm_config.external_etcd.cert_file }}"
+{% endif %}
+{% if kubeadm_config.external_etcd.key_file is defined and kubeadm_config.external_etcd.key_file | length > 0 %}
+    keyFile: "{{ kubeadm_config.external_etcd.key_file }}"
+{% endif %}
+{% endif %}
+{% if kubeadm_config.cluster_network is defined and kubeadm_config.cluster_network | length > 0 %}
+networking:
+{% if kubeadm_config.cluster_network.service_subnet is defined and kubeadm_config.cluster_network.service_subnet | length > 0%}
+  serviceSubnet: "{{ kubeadm_config.cluster_network.service_subnet }}"
+{% endif %}
+{% if kubeadm_config.cluster_network.pod_subnet is defined and kubeadm_config.cluster_network.pod_subnet | length > 0%}
+  podSubnet: "{{ kubeadm_config.cluster_network.pod_subnet }}"
+{% endif %}
+{% if kubeadm_config.cluster_network.dns_domain is defined and kubeadm_config.cluster_network.dns_domain | length > 0%}
+  dnsDomain: "{{ kubeadm_config.cluster_network.dns_domain }}"
+{% endif %}
+{% endif %}
+kubernetesVersion: "{{ kubeadm_kubernetes_version }}"
+{% if kubeadm_config.apiserver_endpoint is defined %}
+controlPlaneEndpoint: "{{ (kubeadm_config.apiserver_endpoint | length > 0) | ternary(kubeadm_config.apiserver_endpoint, ansible_default_ipv4.address) }}:{{ (kubeadm_config.apiserver_bind_port | int != 0 ) | ternary(kubeadm_config.apiserver_bind_port, '6443') }}"
+{% endif %}
 
 ---
 apiVersion: {{ kubeadm_config_apiversion }}

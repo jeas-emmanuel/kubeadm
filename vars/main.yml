@@ -8,6 +8,16 @@ kubeadm_hardwares_min_requirements:
   ram: 2
   cpu: 2
 
+kubeadm_init_config: []
+kubeadm_config: |
+  {{
+    kubeadm_init_config |
+    combine(kubeadm_bootsrap_tokens_config, list_merge='append') |
+    combine(kubeadm_node_registration_config, list_merge='append') |
+    combine(kubeadm_etcd_config, list_merge='append') |
+    combine(kubeadm_networking_config, list_merge='append')
+  }}
+
 kubeadm_kubelet_dir: /var/lib/kubelet
 kubeadm_manifests_dir: /etc/kubernetes/manifests
 kubeadm_pki_dir: "{{ kubeadm_init_config.cert_dir | default('/etc/kubernetes/pki') }}"
