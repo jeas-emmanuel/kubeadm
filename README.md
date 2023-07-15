@@ -98,7 +98,7 @@ kubeadm_default_image_repo: registry.k8s.io
 kubeadm_config_file: /tmp/kubeadm-config.yaml
 ```
 
-### Kubeadm configuration file
+### Kubeadm configuration file (`defaults/main.yml`)
 ```yaml
 kubeadm_bootsrap_tokens_config:
   tokens:
@@ -194,33 +194,6 @@ kubeadm_scheduler_config:
 kubeadm_kubelet_config:
   kubelet:
     cgroup_driver: systemd
-```
-
-kubadm control plane node options (`defaults/main.yml`).
-```yaml
-kubeadm_init_config:
-  apiserver_advertise_address: ''
-  apiserver_bind_port: 6443
-  apiserver_cert_extra_sans: ''
-  cert_dir: /etc/kubernetes/pki
-  certificate_key: ''
-  control_plane_endpoint: ''
-  cri_socket: ''
-  dry_run: false
-  feature_gates: ''
-  ignore_preflight_errors: ''
-  image_repositoriy: registry.k8s.io
-  kubernetes_version: stable-1
-  node_name: ''
-  pod_network_cidr: 192.168.0.0/16
-  service_cidr: 10.96.0.0/12
-  service_dns_domain: cluster.local
-  skip_certificate_key: true
-  skip_phases: []
-  skip_token_print: true
-  token: ''
-  token_ttl: ''
-  upload_certs: true
 ```
 
 A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
