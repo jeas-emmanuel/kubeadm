@@ -66,7 +66,7 @@ nodeRegistration:
   skipPhases: {{ kubeadm_config.skip_phases }}
 {% endif %}
 localAPIEndpoint:
-  advertiseAddress: {{ (kubeadm_config.apiserver_advertise_address is defined) | ternary(kubeadm_config.apiserver_advertise_address, ansible_default_ipv4.address) }}
+  advertiseAddress: "{{ (kubeadm_config.apiserver_advertise_address | length > 0) | ternary(kubeadm_config.apiserver_advertise_address, ansible_default_ipv4.address) }}"
 {% if kubeadm_config.apiserver_bind_port is defined %}
   bindPort: {{ kubeadm_config.apiserver_bind_port }}
 {% endif %}
@@ -78,7 +78,6 @@ localAPIEndpoint:
 {% endif %}
 {% if kubeadm_upload_certs and kubeadm_config.certificate_key | length > 0 %}
 certificateKey: "{{ kubeadm_config.certificate_key }}"
-{% endif %}
 {% endif %}
 
 ---
@@ -139,11 +138,73 @@ kubernetesVersion: "{{ kubeadm_kubernetes_version }}"
 {% if kubeadm_config.apiserver_endpoint is defined %}
 controlPlaneEndpoint: "{{ (kubeadm_config.apiserver_endpoint | length > 0) | ternary(kubeadm_config.apiserver_endpoint, ansible_default_ipv4.address) }}:{{ (kubeadm_config.apiserver_bind_port | int != 0 ) | ternary(kubeadm_config.apiserver_bind_port, '6443') }}"
 {% endif %}
+{% if kubeadm_config.apiserver is defined and kubeadm_config.apiserver | length > 0 %}
+apiServer:
+{% if kubeadm_config.apiserver.extra_args is defined and kubeadm_config.apiserver.extra_args | length > 0 %}
+  extraArgs:
+{{ display_list(kubeadm_config.apiserver.extra_args) }}
+{% endif %}
+{% if kubeadm_config.apiserver.extra_volumes is defined and kubeadm_config.apiserver.extra_volumes | length > 0 %}
+  extraVolumes:
+{% for volume in kubeadm_config.apiserver.extra_volumes %}
+    - name: "{{ volume.name }}"
+      hostPath: "{{ volume.host_path }}"
+      mountPath: "{{ volume.mount_path }}"
+      readOnly: {{ volume.read_only | lower }}
+      pathType: "{{ volume.path_type }}"
+{% endfor %}
+{% endif%}
+{% if kubeadm_config.apiserver.cert_sans is defined and kubeadm_config.apiserver.cert_sans | length > 0 %}
+  certSANs:
+{% for cert_san in kubeadm_config.apiserver.cert_sans %}
+    - {{ cert_san }}
+{% endfor %}
+{% endif%}
+{% endif%}
+{% if kubeadm_config.controllermanager is defined and kubeadm_config.controllermanager | length > 0 %}
+controllerManager:
+{% if kubeadm_config.controllermanager.extra_args is defined and kubeadm_config.controllermanager.extra_args | length > 0 %}
+  extraArgs:
+{{ display_list(kubeadm_config.controllermanager.extra_args) }}
+{% endif %}
+{% if kubeadm_config.controllermanager.extra_volumes is defined and kubeadm_config.controllermanager.extra_volumes | length > 0 %}
+  extraVolumes:
+{% for volume in kubeadm_config.controllermanager.extra_volumes %}
+    - name: "{{ volume.name }}"
+      hostPath: "{{ volume.host_path }}"
+      mountPath: "{{ volume.mount_path }}"
+      readOnly: {{ volume.read_only | lower }}
+      pathType: "{{ volume.path_type }}"
+{% endfor %}
+{% endif%}
+{% endif%}
+{% if kubeadm_config.scheduler is defined and kubeadm_config.scheduler | length > 0 %}
+scheduler:
+{% if kubeadm_config.scheduler.extra_args is defined and kubeadm_config.scheduler.extra_args | length > 0 %}
+  extraArgs:
+{{ display_list(kubeadm_config.scheduler.extra_args) }}
+{% endif %}
+{% if kubeadm_config.scheduler.extra_volumes is defined and kubeadm_config.scheduler.extra_volumes | length > 0 %}
+  extraVolumes:
+{% for volume in kubeadm_config.scheduler.extra_volumes %}
+    - name: "{{ volume.name }}"
+      hostPath: "{{ volume.host_path }}"
+      mountPath: "{{ volume.mount_path }}"
+      readOnly: {{ volume.read_only | lower }}
+      pathType: "{{ volume.path_type }}"
+{% endfor %}
+{% endif%}
+{% endif%}
 
+{% if kubeadm_config.kubelet is defined and kubeadm_config.kubelet | length > 0 %}
 ---
 apiVersion: {{ kubeadm_config_apiversion }}
 kind: {{ kubeadm_config_kind_kubelet }}
-
+{% if kubeadm_config.kubelet.cgroup_driver is defined and kubeadm_config.kubelet.cgroup_driver | length > 0 %}
+cgroupDriver: {{ kubeadm_config.kubelet.cgroup_driver }}
+{% endif%}
+{% endif %}
+{% endif %}
 ---
 apiVersion: {{ kubeadm_config_apiversion }}
 kind: {{ kubeadm_config_kind_kubeproxy }}

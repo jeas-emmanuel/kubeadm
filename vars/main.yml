@@ -15,7 +15,11 @@ kubeadm_config: |
     combine(kubeadm_bootsrap_tokens_config, list_merge='append') |
     combine(kubeadm_node_registration_config, list_merge='append') |
     combine(kubeadm_etcd_config, list_merge='append') |
-    combine(kubeadm_networking_config, list_merge='append')
+    combine(kubeadm_networking_config, list_merge='append') |
+    combine(kubeadm_apiserver_config, list_merge='append') |
+    combine(kubeadm_controllermanager_config, list_merge='append') |
+    combine(kubeadm_scheduler_config, list_merge='append') |
+    combine(kubeadm_kubelet_config, list_merge='append')
   }}
 
 kubeadm_kubelet_dir: /var/lib/kubelet

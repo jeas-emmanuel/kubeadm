@@ -67,6 +67,135 @@ kubeadm_network_parameters:
     value: 1
 ```
 
+kubeadm installation parameters (`defaults/main.yml`)
+```yaml
+kubeadm_google_signing_key_url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+kubeadm_google_signing_key: "/etc/apt/keyrings/kubernetes-archive-keyring.gpg"
+
+kubeadm_k8s_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+kubeadm_k8s_apt_repo_file: "/etc/apt/sources.list.d/kubernetes.list"
+```
+
+kubeadm configuration's file api (`defaults/main.yml`)
+```yaml
+kubeadm_config_apiversion: kubeadm.k8s.io/v1beta3
+kubeadm_config_kind_init: InitConfiguration
+kubeadm_config_kind_cluster: ClusterConfiguration
+kubeadm_config_kind_kubelet: KubeletConfiguration
+kubeadm_config_kind_kubeproxy: KubeProxyConfiguration
+kubeadm_config_kind_join: JoinConfiguration
+```
+
+params for kubeadm configuration file (`defaults/main.yml`)
+```yaml
+kubeadm_use_config_file: true
+kubeadm_upload_certs: false
+kubeadm_use_external_etcd: false
+```
+
+```yaml
+kubeadm_default_image_repo: registry.k8s.io
+kubeadm_config_file: /tmp/kubeadm-config.yaml
+```
+
+### Kubeadm configuration file
+```yaml
+kubeadm_bootsrap_tokens_config:
+  tokens:
+    - token: "783bde.3f89s0fje9f38fhf"
+      description: "kubeadm bootstrap token"
+      ttl: "24h"
+      usages:
+        - signing
+        - authentication
+      groups:
+        - system:bootstrappers:kubeadm:default-node-token
+
+kubeadm_node_registration_config:
+  taints:
+    - key: "kubeadmNode"
+      value: "value1"
+      effect: "NoSchedule"
+  kubelet_extra_args:
+    - key: v
+      value: 4
+  ignore_preflight_errors:
+    - IsPrivilegedUser
+    - Swap
+  skip_phases: []
+  image_pull_policy: IfNotPresent
+  certificate_key: ""
+
+kubeadm_etcd_config:
+  local_etcd:
+    image_repo: "{{ kubeadm_default_image_repo }}"
+    image_tag: "3.2.24"
+    data_dir: "/var/lib/etcd"
+    extra_args:
+      - key: listen-client-urls
+        value: "http://localhost:2379"
+    server_cert_sans: []
+    peer_cert_sans: []
+  external_etcd: []
+    # endpoints:
+    #   - "10.100.0.1:2379"
+    #   - "10.100.0.2:2379"
+    # ca_file: "/etcd/kubernetes/pki/etcd/etcd-ca.crt"
+    # cert_file: "/etcd/kubernetes/pki/etcd/etcd.crt"
+    # key_file: "/etcd/kubernetes/pki/etcd/etcd.key"
+
+kubeadm_networking_config:
+  cluster_network:
+    service_subnet: "10.96.0.0/16"
+    pod_subnet: "10.244.0.0/24"
+    dns_domain: cluster.local
+  apiserver_advertise_address: ""
+  apiserver_bind_port: 6443
+  apiserver_endpoint: ""
+
+kubeadm_apiserver_config:
+  apiserver:
+    extra_args:
+      - key: authorization-mode
+        value: "Node,RBAC"
+    extra_volumes: []
+      # - name: some-volume
+      #   host_path: "/etc/"
+      #   mount_path: "/etc/"
+      #   read_only: true
+      #   path_type: DirectoryOrCreate
+    cert_sans: []
+    timeout_for_controlplane: "4m0s"
+
+kubeadm_controllermanager_config:
+  controllermanager:
+    extra_args:
+      - key: node-cidr-mask-size
+        value: 20
+    extra_volumes: []
+      # - name: some-volume
+      #   host_path: "/etc/"
+      #   mount_path: "/etc/"
+      #   read_only: true
+      #   path_type: Directory
+
+kubeadm_scheduler_config:
+  scheduler:
+    extra_args:
+      - key: address
+        value: "10.100.0.1"
+    extra_volumes: []
+      # - name: some-volume
+      #   host_path: "/etc/"
+      #   mount_path: "/etc/"
+      #   read_only: true
+      #   path_type: Directory
+
+kubeadm_kubelet_config:
+  kubelet:
+    cgroup_driver: systemd
+```
+
 kubadm control plane node options (`defaults/main.yml`).
 ```yaml
 kubeadm_init_config:

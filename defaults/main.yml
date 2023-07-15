@@ -6,11 +6,11 @@ kubeadm_system_package:
   - curl
 
 kubeadm_packages:
-  - kubeadm=1.27.0-00
-  - kubelet=1.27.3-00
-  - kubectl=1.27.3-00
+  - kubelet=1.26.0-00
+  - kubeadm=1.26.0-00
+  - kubectl=1.26.0-00
 
-kubeadm_kubernetes_version: "v1.27.0"
+kubeadm_kubernetes_version: "v1.26.0"
 
 kubeadm_network_modules:
   - overlay
@@ -44,10 +44,6 @@ kubeadm_use_external_etcd: false
 kubeadm_default_image_repo: registry.k8s.io
 kubeadm_config_file: /tmp/kubeadm-config.yaml
 
-kubeadm_apiserver_config: []
-kubeadm_controllermanager_config: []
-kubeadm_scheduler_config: []
-
 kubeadm_bootsrap_tokens_config:
   tokens:
     - token: "783bde.3f89s0fje9f38fhf"
@@ -80,7 +76,7 @@ kubeadm_etcd_config:
     image_tag: "3.2.24"
     data_dir: "/var/lib/etcd"
     extra_args:
-      - key: listen_client_urls
+      - key: listen-client-urls
         value: "http://localhost:2379"
     server_cert_sans: []
     peer_cert_sans: []
@@ -100,6 +96,48 @@ kubeadm_networking_config:
   apiserver_advertise_address: ""
   apiserver_bind_port: 6443
   apiserver_endpoint: ""
+
+kubeadm_apiserver_config:
+  apiserver:
+    extra_args:
+      - key: authorization-mode
+        value: "Node,RBAC"
+    extra_volumes: []
+      # - name: some-volume
+      #   host_path: "/etc/"
+      #   mount_path: "/etc/"
+      #   read_only: true
+      #   path_type: DirectoryOrCreate
+    cert_sans: []
+    timeout_for_controlplane: "4m0s"
+
+kubeadm_controllermanager_config:
+  controllermanager:
+    extra_args:
+      - key: node-cidr-mask-size
+        value: 20
+    extra_volumes: []
+      # - name: some-volume
+      #   host_path: "/etc/"
+      #   mount_path: "/etc/"
+      #   read_only: true
+      #   path_type: Directory
+
+kubeadm_scheduler_config:
+  scheduler:
+    extra_args:
+      - key: address
+        value: "10.100.0.1"
+    extra_volumes: []
+      # - name: some-volume
+      #   host_path: "/etc/"
+      #   mount_path: "/etc/"
+      #   read_only: true
+      #   path_type: Directory
+
+kubeadm_kubelet_config:
+  kubelet:
+    cgroup_driver: systemd
 
 kubeadm_init_certs:
   enable: true
