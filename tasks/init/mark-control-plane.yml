@@ -1,0 +1,9 @@
+---
+# FIXME: tasks must be indempotent
+
+- name: Mark node as a control plane
+  become: true
+  ansible.builtin.command:
+    cmd: "kubeadm init phase mark-control-plane"
+  register: result
+  changed_when: false

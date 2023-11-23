@@ -8,10 +8,10 @@ kubeadm_hardwares_min_requirements:
   ram: 2
   cpu: 2
 
-kubeadm_init_config: []
-kubeadm_config: |
+kubeadm_array_config: []
+_kubeadm_config: |
   {{
-    kubeadm_init_config |
+    kubeadm_array_config |
     combine(kubeadm_bootsrap_tokens_config, list_merge='append') |
     combine(kubeadm_node_registration_config, list_merge='append') |
     combine(kubeadm_etcd_config, list_merge='append') |
@@ -19,24 +19,15 @@ kubeadm_config: |
     combine(kubeadm_apiserver_config, list_merge='append') |
     combine(kubeadm_controllermanager_config, list_merge='append') |
     combine(kubeadm_scheduler_config, list_merge='append') |
-    combine(kubeadm_kubelet_config, list_merge='append')
+    combine(kubeadm_kubelet_config, list_merge='append') |
+    combine(kubeadm_join_config, list_merge='append')
   }}
 
-kubeadm_kubelet_dir: /var/lib/kubelet
-kubeadm_manifests_dir: /etc/kubernetes/manifests
-kubeadm_pki_dir: "{{ kubeadm_init_config.cert_dir | default('/etc/kubernetes/pki') }}"
+kubeadm_init_phase_control_plane_files:
+  - manifests/kube-apiserver.yaml
+  - manifests/kube-controller-manager.yaml
+  - manifests/kube-scheduler.yaml
 
-kubeadm_component_configration_files:
-  - "{{ kubeadm_manifests_dir }}/kube-apiserver.yaml"
-  - "{{ kubeadm_manifests_dir }}/kube-controller-manager.yaml"
-  - "{{ kubeadm_manifests_dir }}/kube-scheduler.yaml"
-  - "{{ kubeadm_manifests_dir }}/etcd.yaml"
-
-kubeadm_etcd_dir: "/var/lib/etcd"
-
-kubeadm_init_config_file:
-  - /etc/kubernetes/admin.conf
-  - /etc/kubernetes/kubelet.conf
-  - /etc/kubernetes/bootstrap-kubelet.conf
-  - /etc/kubernetes/controller-manager.conf
-  - /etc/kubernetes/scheduler.conf
+kubeadm_kubelet_files:
+  - /var/lib/kubelet/kubeadm-flags.env
+  - /var/lib/kubelet/config.yaml

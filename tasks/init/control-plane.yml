@@ -1,0 +1,20 @@
+---
+# FIXME: tasks must be indempotent
+- name: Check if files already exist
+  ansible.builtin.stat:
+    path: "{{ kubeadm_dir }}/{{ kubeadm_control_plane_file }}"
+  loop: "{{ kubeadm_init_phase_control_plane_files }}"
+  loop_control:
+    loop_var: "kubeadm_control_plane_file"
+  register: result
+
+- name: Set variables
+  ansible.builtin.set_fact:
+    _kubeadm_control_planes_files_on_nodes: "{{ result | community.general.json_query('results[*].stat.exists') }}"
+
+- name: Generate all static Pod manifest files necessary to establish the control plane
+  become: true
+  ansible.builtin.command:
+    cmd: "kubeadm init phase control-plane all"
+  register: result
+  changed_when: '"false" in _kubeadm_control_planes_files_on_nodes | lower'

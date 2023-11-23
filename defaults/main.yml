@@ -6,11 +6,11 @@ kubeadm_system_package:
   - curl
 
 kubeadm_packages:
-  - kubelet=1.26.0-00
-  - kubeadm=1.26.0-00
-  - kubectl=1.26.0-00
+  - kubectl
+  - kubelet=1.28.0-00
+  - kubeadm=1.28.0-00
 
-kubeadm_kubernetes_version: "v1.26.0"
+kubeadm_kubernetes_version: "v1.27.0"
 
 kubeadm_network_modules:
   - overlay
@@ -31,6 +31,9 @@ kubeadm_k8s_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
 kubeadm_k8s_apt_repo_file: "/etc/apt/sources.list.d/kubernetes.list"
 
 kubeadm_config_apiversion: kubeadm.k8s.io/v1beta3
+kubeadm_config_init_apiversion: "{{ kubeadm_config_apiversion }}"
+kubeadm_config_kubelet_apiversion: "kubelet.config.k8s.io/v1beta1"
+kubeadm_config_kubeproxy_apiversion: "kubeproxy.config.k8s.io/v1alpha1"
 kubeadm_config_kind_init: InitConfiguration
 kubeadm_config_kind_cluster: ClusterConfiguration
 kubeadm_config_kind_kubelet: KubeletConfiguration
@@ -38,11 +41,21 @@ kubeadm_config_kind_kubeproxy: KubeProxyConfiguration
 kubeadm_config_kind_join: JoinConfiguration
 
 kubeadm_use_config_file: true
+
 kubeadm_upload_certs: false
+
 kubeadm_use_external_etcd: false
 
-kubeadm_default_image_repo: registry.k8s.io
 kubeadm_config_file: /tmp/kubeadm-config.yaml
+kubeadm_dir: "/etc/kubernetes"
+
+kubeadm_container_runtime_socket: "unix:///run/containerd/containerd.sock"
+
+ignore_preflight_errors:
+  - IsPrivilegedUser
+  - Swap
+
+kubeadm_image_pull_policy: IfNotPresent
 
 kubeadm_bootsrap_tokens_config:
   tokens:
@@ -63,21 +76,18 @@ kubeadm_node_registration_config:
   kubelet_extra_args:
     - key: v
       value: 4
-  ignore_preflight_errors:
-    - IsPrivilegedUser
-    - Swap
   skip_phases: []
-  image_pull_policy: IfNotPresent
   certificate_key: ""
+  cri_socket: "{{ kubeadm_container_runtime_socket }}"
 
 kubeadm_etcd_config:
   local_etcd:
-    image_repo: "{{ kubeadm_default_image_repo }}"
-    image_tag: "3.2.24"
+    image_repo: "{{ kubeadm_image_repository | default('registry.k8s.io') }}"
+    image_tag: "3.5.9-0"
     data_dir: "/var/lib/etcd"
     extra_args:
       - key: listen-client-urls
-        value: "http://localhost:2379"
+        value: "https://localhost:2379"
     server_cert_sans: []
     peer_cert_sans: []
   external_etcd: []
@@ -139,33 +149,17 @@ kubeadm_kubelet_config:
   kubelet:
     cgroup_driver: systemd
 
-kubeadm_init_certs:
-  enable: true
-  all: false
-  subcommand:
-    - cmd: ca
-      enable: true
-    - cmd: apiserver
-      enable: true
-    - cmd: apiserver-kubelet-client
-      enable: true
-    - cmd: front-proxy-ca
-      enable: true
-    - cmd: etcd-ca
-      enable: true
-    - cmd: etcd-server
-      enable: true
-    - cmd: etcd-peer
-      enable: true
-    - cmd: healthcheck-client
-      enable: true
-    - cmd: apiserver-etcd-client
-      enable: true
-    - cmd: sa
-      enable: true
+kubeadm_kubeproxy_config: []
 
-kubeadm_init_phase:
-  - name: preflight
-    options: []
-  - name: kubelet-start
-    options: []
+kubeadm_join_config:
+  join:
+    registration:
+      unsafe_skip_ca_verification: true
+      cri_socket: "{{ kubeadm_container_runtime_socket }}"
+      taints: []
+      kubelet_extra_args:
+        - key: enable-controller-attach-detach
+          value: false
+        - key: node-labels
+          value: node
+    skip_phases: []

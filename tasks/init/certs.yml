@@ -1,0 +1,7 @@
+---
+- name: Certificate generation
+  become: true
+  ansible.builtin.command:
+    cmd: "kubeadm init phase certs all"
+  register: result
+  changed_when: '"Generating" in result.stdout'

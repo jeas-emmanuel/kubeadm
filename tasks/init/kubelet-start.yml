@@ -1,0 +1,15 @@
+---
+# FIXME: tasks must be indempotent
+
+- name: Check if kubelet is started
+  ansible.builtin.command:
+    cmd: "systemctl status kubelet.service"
+  register: kubeadm_kubelet_status
+  changed_when: false
+
+- name: Run kubelet
+  become: true
+  ansible.builtin.command:
+    cmd: "kubeadm init phase kubelet-start --config {{ kubeadm_config_file }}"
+  register: result
+  changed_when: false

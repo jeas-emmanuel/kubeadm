@@ -128,7 +128,7 @@ kubeadm_node_registration_config:
 
 kubeadm_etcd_config:
   local_etcd:
-    image_repo: "{{ kubeadm_default_image_repo }}"
+    image_repo: "{{ kubeadm_default_image_repo | default("registry.k8s.io") }}"
     image_tag: "3.2.24"
     data_dir: "/var/lib/etcd"
     extra_args:

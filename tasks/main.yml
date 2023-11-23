@@ -12,6 +12,6 @@
   ansible.builtin.include_tasks: configuration-file.yml
   when: kubeadm_use_config_file
 
-# - name: Initialize control plane node
-#   when: "'control_planes' in group_names"
-#   ansible.builtin.include_tasks: control-plane.yml
+- name: Initialize control plane node
+  when: "'control_planes' in group_names"
+  ansible.builtin.include_tasks: control-plane.yml
