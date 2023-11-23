@@ -1,15 +1,21 @@
 ---
-# FIXME: tasks must be indempotent
-
-- name: Check if kubelet is started
-  ansible.builtin.command:
-    cmd: "systemctl status kubelet.service"
-  register: kubeadm_kubelet_status
-  changed_when: false
-
-- name: Run kubelet
+- name: Kubeadm create all static Pod manifest files necessary to establish the control plane
   become: true
-  ansible.builtin.command:
-    cmd: "kubeadm init phase kubelet-start --config {{ kubeadm_config_file }}"
-  register: result
-  changed_when: false
+  block:
+    - name: Kubeadm make a dry-run to compare changes
+      become: true
+      ansible.builtin.command:
+        cmd: "kubeadm init phase kubelet-start --config {{ kubeadm_config_file }} --dry-run"
+      register: kubeadm_kubelet_dry_run
+      changed_when: false
+    - name: Generate control plane manifests files
+      ansible.builtin.copy:
+        src: "{{ kubeadm_kubelet_dry_run | regex_search('/etc/kubernetes/tmp/kubeadm-init-dryrun([0-9]+)') }}/{{ item }}"
+        dest: "/var/lib/kubelet/{{ item }}"
+        mode: '0644'
+        remote_src: true
+      loop: "{{ kubeadm_kubelet_files }}"
+      notify: Restart kubelet
+
+- name: Restart kubelet now
+  ansible.builtin.meta: flush_handlers

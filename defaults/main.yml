@@ -4,6 +4,7 @@ kubeadm_system_package:
   - apt-transport-https
   - ca-certificates
   - curl
+  - jq
 
 kubeadm_packages:
   - kubectl
@@ -30,20 +31,8 @@ kubeadm_google_signing_key: "/etc/apt/keyrings/kubernetes-archive-keyring.gpg"
 kubeadm_k8s_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
 kubeadm_k8s_apt_repo_file: "/etc/apt/sources.list.d/kubernetes.list"
 
-kubeadm_config_apiversion: kubeadm.k8s.io/v1beta3
-kubeadm_config_init_apiversion: "{{ kubeadm_config_apiversion }}"
-kubeadm_config_kubelet_apiversion: "kubelet.config.k8s.io/v1beta1"
-kubeadm_config_kubeproxy_apiversion: "kubeproxy.config.k8s.io/v1alpha1"
-kubeadm_config_kind_init: InitConfiguration
-kubeadm_config_kind_cluster: ClusterConfiguration
-kubeadm_config_kind_kubelet: KubeletConfiguration
-kubeadm_config_kind_kubeproxy: KubeProxyConfiguration
-kubeadm_config_kind_join: JoinConfiguration
-
 kubeadm_use_config_file: true
-
 kubeadm_upload_certs: false
-
 kubeadm_use_external_etcd: false
 
 kubeadm_config_file: /tmp/kubeadm-config.yaml
@@ -100,7 +89,7 @@ kubeadm_etcd_config:
 
 kubeadm_networking_config:
   cluster_network:
-    service_subnet: "10.96.0.0/16"
+    service_subnet: "10.99.0.0/16"
     pod_subnet: "10.244.0.0/24"
     dns_domain: cluster.local
   apiserver_advertise_address: ""

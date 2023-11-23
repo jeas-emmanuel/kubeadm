@@ -1,9 +1,22 @@
 ---
-# FIXME: tasks must be indempotent
+- name: Gathering informations about Addons
+  become: true
+  block:
+    - name: Get kube-proxy addon
+      ansible.builtin.command:
+        cmd: "kubectl get daemonset -n kube-system --kubeconfig=/etc/kubernetes/admin.conf -o custom-columns=NAME:.metadata.name"
+      changed_when: false
+      register: kubeadm_kubeproxy
+
+    - name: Get coredns addon
+      ansible.builtin.command:
+        cmd: "kubectl get deployment -n kube-system --kubeconfig=/etc/kubernetes/admin.conf -o custom-columns=NAME:.metadata.name"
+      changed_when: false
+      register: kubeadm_coredns
 
 - name: Install required addons for passing conformance tests
   become: true
   ansible.builtin.command:
     cmd: "kubeadm init phase addon all --config {{ kubeadm_config_file }}"
   register: result
-  changed_when: false
+  changed_when: (kubeadm_kubeproxy.stdout.split() + kubeadm_coredns.stdout.split()) | intersect(kubeadm_addons) | length < kubeadm_addons | length

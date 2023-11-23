@@ -1,6 +1,5 @@
 ---
 # FIXME: tasks must be indempotent
-
 - name: Mark node as a control plane
   become: true
   ansible.builtin.command:

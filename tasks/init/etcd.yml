@@ -1,8 +1,22 @@
 ---
-# FIXME: tasks must be indempotent
-- name: Generate static Pod manifest file for local etcd
+- name: Ensure etcd directory exists
   become: true
-  ansible.builtin.command:
-    cmd: "kubeadm init phase etcd local --config {{ kubeadm_config_file }}"
-  register: result
-  changed_when: '"Writing" in result.stdout'
+  ansible.builtin.file:
+    path: "/var/lib/etcd"
+    mode: '0700'
+
+- name: Kubeadm create static Pod manifest file for local etcd
+  become: true
+  block:
+    - name: Kubeadm make a dry-run to compare changes
+      become: true
+      ansible.builtin.command:
+        cmd: "kubeadm init phase etcd local --config {{ kubeadm_config_file }} --dry-run"
+      register: kubeadm_etcd_dry_run
+      changed_when: false
+    - name: Generate etcd manifest file
+      ansible.builtin.copy:
+        src: "{{ kubeadm_etcd_dry_run | regex_search('/etc/kubernetes/tmp/kubeadm-init-dryrun([0-9]+)') }}/etcd.yaml"
+        dest: "{{ kubeadm_manifest_dir }}/{{ kubeadm_etcd_file }}"
+        mode: '0600'
+        remote_src: true

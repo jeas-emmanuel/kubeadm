@@ -8,8 +8,18 @@ kubeadm_hardwares_min_requirements:
   ram: 2
   cpu: 2
 
+kubeadm_config_apiversion: kubeadm.k8s.io/v1beta3
+kubeadm_config_init_apiversion: "{{ kubeadm_config_apiversion }}"
+kubeadm_config_kubelet_apiversion: "kubelet.config.k8s.io/v1beta1"
+kubeadm_config_kubeproxy_apiversion: "kubeproxy.config.k8s.io/v1alpha1"
+kubeadm_config_kind_init: InitConfiguration
+kubeadm_config_kind_cluster: ClusterConfiguration
+kubeadm_config_kind_kubelet: KubeletConfiguration
+kubeadm_config_kind_kubeproxy: KubeProxyConfiguration
+kubeadm_config_kind_join: JoinConfiguration
+
 kubeadm_array_config: []
-_kubeadm_config: |
+kubeadm_config: |
   {{
     kubeadm_array_config |
     combine(kubeadm_bootsrap_tokens_config, list_merge='append') |
@@ -23,11 +33,23 @@ _kubeadm_config: |
     combine(kubeadm_join_config, list_merge='append')
   }}
 
-kubeadm_init_phase_control_plane_files:
-  - manifests/kube-apiserver.yaml
-  - manifests/kube-controller-manager.yaml
-  - manifests/kube-scheduler.yaml
+kubeadm_manifest_dir: "/etc/kubernetes/manifests"
+
+kubeadm_control_plane_files:
+  - "kube-apiserver.yaml"
+  - "kube-controller-manager.yaml"
+  - "kube-scheduler.yaml"
 
 kubeadm_kubelet_files:
-  - /var/lib/kubelet/kubeadm-flags.env
-  - /var/lib/kubelet/config.yaml
+  - kubeadm-flags.env
+  - config.yaml
+
+kubeadm_etcd_file: "etcd.yaml"
+
+kubeadm_init_configmaps:
+  - kubeadm-config
+  - kubelet-config
+
+kubeadm_addons:
+  - coredns
+  - kube-proxy
