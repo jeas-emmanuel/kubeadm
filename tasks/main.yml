@@ -1,12 +1,12 @@
 ---
-# - name: Validate prerequis
-#   ansible.builtin.include_tasks: requirements.yml
+- name: Validate prerequis
+  ansible.builtin.include_tasks: requirements.yml
 
-# - name: Setup machines
-#   ansible.builtin.include_tasks: "prepare/{{ ansible_os_family | lower }}.yml"
+- name: Setup machines
+  ansible.builtin.include_tasks: "prepare/{{ ansible_os_family | lower }}.yml"
 
-# - name: Setup network
-#   ansible.builtin.include_tasks: prepare/network.yml
+- name: Setup network
+  ansible.builtin.include_tasks: prepare/network.yml
 
 - name: Configuration file
   ansible.builtin.include_tasks: configuration-file.yml

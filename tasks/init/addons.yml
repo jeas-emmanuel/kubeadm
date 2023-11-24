@@ -19,4 +19,5 @@
   ansible.builtin.command:
     cmd: "kubeadm init phase addon all --config {{ kubeadm_config_file }}"
   register: result
-  changed_when: (kubeadm_kubeproxy.stdout.split() + kubeadm_coredns.stdout.split()) | intersect(kubeadm_addons) | length < kubeadm_addons | length
+  when: (kubeadm_kubeproxy.stdout.split() + kubeadm_coredns.stdout.split()) | intersect(kubeadm_addons) | length < kubeadm_addons | length
+  changed_when: true

@@ -19,3 +19,7 @@
 
 - name: Restart kubelet now
   ansible.builtin.meta: flush_handlers
+
+- name: Waiting for kubelet being ready
+  ansible.builtin.wait_for:
+    timeout: 45

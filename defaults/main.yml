@@ -89,7 +89,7 @@ kubeadm_etcd_config:
 
 kubeadm_networking_config:
   cluster_network:
-    service_subnet: "10.99.0.0/16"
+    service_subnet: "10.96.0.0/16"
     pod_subnet: "10.244.0.0/24"
     dns_domain: cluster.local
   apiserver_advertise_address: ""
@@ -114,7 +114,7 @@ kubeadm_controllermanager_config:
   controllermanager:
     extra_args:
       - key: node-cidr-mask-size
-        value: 20
+        value: 24
     extra_volumes: []
       # - name: some-volume
       #   host_path: "/etc/"
@@ -125,8 +125,8 @@ kubeadm_controllermanager_config:
 kubeadm_scheduler_config:
   scheduler:
     extra_args:
-      - key: address
-        value: "10.100.0.1"
+      - key: bind-address
+        value: "0.0.0.0"
     extra_volumes: []
       # - name: some-volume
       #   host_path: "/etc/"
