@@ -4,13 +4,13 @@
   block:
     - name: Get kube-proxy addon
       ansible.builtin.command:
-        cmd: "kubectl get daemonset -n kube-system --kubeconfig=/etc/kubernetes/admin.conf -o custom-columns=NAME:.metadata.name"
+        cmd: "kubectl get daemonset -n kube-system --kubeconfig={{ kubeadm_admin_conf_file }} -o custom-columns=NAME:.metadata.name"
       changed_when: false
       register: kubeadm_kubeproxy
 
     - name: Get coredns addon
       ansible.builtin.command:
-        cmd: "kubectl get deployment -n kube-system --kubeconfig=/etc/kubernetes/admin.conf -o custom-columns=NAME:.metadata.name"
+        cmd: "kubectl get deployment -n kube-system --kubeconfig={{ kubeadm_admin_conf_file }} -o custom-columns=NAME:.metadata.name"
       changed_when: false
       register: kubeadm_coredns
 

@@ -34,3 +34,11 @@
 - name: Install all the addons
   ansible.builtin.include_tasks:
     file: "init/addons.yml"
+
+- name: Configure kubectl
+  ansible.builtin.include_tasks:
+    file: "configure-kubectl.yml"
+
+- name: Deploy cni add-on
+  ansible.builtin.include_tasks:
+    file: "cni/{{ kubeadm_cni_name }}.yml"
