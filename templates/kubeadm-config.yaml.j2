@@ -209,13 +209,16 @@ kind: {{ kubeadm_config_kind_kubeproxy }}
 
 {%- endif -%}
 
-{% if 'nodes' in group_names %}
+{% if 'worker_nodes' in group_names %}
 {% if kubeadm_config.join is defined and kubeadm_config.join | length > 0 %}
 ---
 apiVersion: {{ kubeadm_config_apiversion }}
 kind: {{ kubeadm_config_kind_join }}
 {% if kubeadm_config.join.registration is defined and kubeadm_config.join.registration | length > 0 %}
 nodeRegistration:
+{% if kubeadm_config.join.registration.name is defined and kubeadm_config.join.registration.name | length > 0%}
+  name: {{ kubeadm_config.join.registration.name }}
+{% endif %}
 {% if kubeadm_config.join.registration.cri_socket is defined and kubeadm_config.join.registration | length > 0 %}
   criSocket: "{{ kubeadm_config.join.registration.cri_socket }}"
 {% endif %}

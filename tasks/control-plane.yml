@@ -1,39 +1,42 @@
 ---
-- name: Ensure all pki certificates are generated
-  ansible.builtin.include_tasks:
-    file: "init/certs.yml"
+# - name: Configuration file
+#   ansible.builtin.include_tasks: configuration-file.yml
 
-- name: Generate all kubeconfig files
-  ansible.builtin.include_tasks:
-    file: "init/kubeconfig.yml"
+# - name: Ensure all pki certificates are generated
+#   ansible.builtin.include_tasks:
+#     file: "init/certs.yml"
 
-- name: Etcd static local pod
-  ansible.builtin.include_tasks:
-    file: "init/etcd.yml"
+# - name: Generate all kubeconfig files
+#   ansible.builtin.include_tasks:
+#     file: "init/kubeconfig.yml"
 
-- name: Generate all static Pod manifest files
-  ansible.builtin.include_tasks:
-    file: "init/control-plane.yml"
+# - name: Etcd static local pod
+#   ansible.builtin.include_tasks:
+#     file: "init/etcd.yml"
 
-- name: Kubelet
-  ansible.builtin.include_tasks:
-    file: "init/kubelet-start.yml"
+# - name: Generate all static Pod manifest files
+#   ansible.builtin.include_tasks:
+#     file: "init/control-plane.yml"
 
-- name: Uplaod all configuration
-  ansible.builtin.include_tasks:
-    file: "init/upload-config.yml"
+# - name: Kubelet
+#   ansible.builtin.include_tasks:
+#     file: "init/kubelet-start.yml"
 
-- name: Mark control plane node
-  ansible.builtin.include_tasks:
-    file: "init/mark-control-plane.yml"
+# - name: Uplaod all configuration
+#   ansible.builtin.include_tasks:
+#     file: "init/upload-config.yml"
 
-- name: Finalize kubelet setup
-  ansible.builtin.include_tasks:
-    file: "init/kubelet-finalize.yml"
+# - name: Mark control plane node
+#   ansible.builtin.include_tasks:
+#     file: "init/mark-control-plane.yml"
 
-- name: Install all the addons
-  ansible.builtin.include_tasks:
-    file: "init/addons.yml"
+# - name: Finalize kubelet setup
+#   ansible.builtin.include_tasks:
+#     file: "init/kubelet-finalize.yml"
+
+# - name: Install all the addons
+#   ansible.builtin.include_tasks:
+#     file: "init/addons.yml"
 
 - name: Configure kubectl
   ansible.builtin.include_tasks:

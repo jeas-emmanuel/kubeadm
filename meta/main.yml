@@ -1,6 +1,7 @@
 galaxy_info:
+  standalone: true
   author: Jean Emmanuel Assamoi
-  description: DevOps Engineer
+  description: DevSecOps Engineer
   company: Own company
 
   # If the issue tracker for your role is not on github, uncomment the
@@ -27,10 +28,10 @@ galaxy_info:
   # To view available platforms and versions (or releases), visit:
   # https://galaxy.ansible.com/api/v1/platforms/
   #
-  # platforms:
-  # - name: Fedora
-  #   versions:
-  #   - all
+  platforms:
+    - name: Ubuntu
+      versions:
+        - all
   #   - 25
   # - name: SomePlatform
   #   versions:

@@ -1,0 +1,17 @@
+---
+- name: Kubeadm create all static Pod manifest files necessary to establish the control plane
+  become: true
+  block:
+    - name: Kubeadm make a dry-run to compare changes
+      become: true
+      ansible.builtin.command:
+        cmd: "kubeadm init phase control-plane all --config {{ kubeadm_config_file }} --dry-run"
+      register: kubeadm_control_plane_dry_run
+      changed_when: false
+    - name: Generate control plane manifests files
+      ansible.builtin.copy:
+        src: "{{ kubeadm_control_plane_dry_run | regex_search('/etc/kubernetes/tmp/kubeadm-init-dryrun([0-9]+)') }}/{{ item }}"
+        dest: "{{ kubeadm_manifest_dir }}/{{ item }}"
+        mode: '0600'
+        remote_src: true
+      loop: "{{ kubeadm_control_plane_files }}"

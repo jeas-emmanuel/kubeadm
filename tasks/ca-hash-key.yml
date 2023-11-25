@@ -1,0 +1,8 @@
+---
+- name: Get control plane CA key hash
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail |
+      openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+  register: kubeadm_ca_hash_key
+  changed_when: false

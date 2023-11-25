@@ -36,7 +36,7 @@ kubeadm_config: |
 kubeadm_manifest_dir: "/etc/kubernetes/manifests"
 
 kubeadm_admin_conf_file: "/etc/kubernetes/admin.conf"
-kubeadm_kubectl_conf_dir: "{{ ansible_env.HOME }}/.kube"
+kubeadm_kubectl_conf_dir: ".kube"
 
 kubeadm_control_plane_files:
   - "kube-apiserver.yaml"

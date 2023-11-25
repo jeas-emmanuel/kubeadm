@@ -34,7 +34,6 @@ kubeadm_google_signing_key: "/etc/apt/keyrings/kubernetes-archive-keyring.gpg"
 kubeadm_k8s_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
 kubeadm_k8s_apt_repo_file: "/etc/apt/sources.list.d/kubernetes.list"
 
-kubeadm_use_config_file: true
 kubeadm_upload_certs: false
 kubeadm_use_external_etcd: false
 
@@ -97,7 +96,7 @@ kubeadm_networking_config:
     dns_domain: cluster.local
   apiserver_advertise_address: ""
   apiserver_bind_port: 6443
-  apiserver_endpoint: ""
+  apiserver_endpoint: "{{ hostvars[groups['control_planes'][0]]['ansible_eth0']['ipv4']['address'] }}"
 
 kubeadm_apiserver_config:
   apiserver:
@@ -146,6 +145,7 @@ kubeadm_kubeproxy_config: []
 kubeadm_join_config:
   join:
     registration:
+      name: "{{ ansible_hostname }}"
       unsafe_skip_ca_verification: true
       cri_socket: "{{ kubeadm_container_runtime_socket }}"
       taints: []

@@ -1,17 +1,23 @@
 ---
+- name: Get group name of current user
+  ansible.builtin.command:
+    cmd: "id -gn"
+  changed_when: false
+  register: result
+
 - name: Ensure kubctl configuration's directory exists
-  become: true
   ansible.builtin.file:
     path: "{{ kubeadm_kubectl_conf_dir }}"
     state: directory
     mode: '0755'
-    owner: "{{ ansible_env.USER }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ result.stdout }}"
 
 - name: Copy kubeadm admin configuratiocun's file to kubectl configuration's directory
-  become: true
   ansible.builtin.copy:
     src: "{{ kubeadm_admin_conf_file }}"
     dest: "{{ kubeadm_kubectl_conf_dir }}/config"
     mode: '0755'
-    owner: "{{ ansible_env.USER }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ result.stdout }}"
     remote_src: true
