@@ -8,9 +8,9 @@
 # - name: Setup network
 #   ansible.builtin.include_tasks: prepare/network.yml
 
-# - name: Initialize control plane node
-#   when: "'control_planes' in group_names"
-#   ansible.builtin.include_tasks: control-plane.yml
+- name: Initialize control plane node
+  when: "'control_planes' in group_names"
+  ansible.builtin.include_tasks: control-plane.yml
 
 - name: CA hash key
   ansible.builtin.include_tasks: ca-hash-key.yml

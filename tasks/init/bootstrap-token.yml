@@ -1,0 +1,39 @@
+---
+- name: Check if cluster-info ConfigMap exists
+  kubernetes.core.k8s_info:
+    api_version: v1
+    kind: ConfigMap
+    name: cluster-info
+    namespace: kube-public
+    kubeconfig: "{{ kubeadm_admin_conf_file }}"
+  register: kubeadm_cluster_cm_infos
+
+- name: Check if bootstrap token exists
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail |
+      kubeadm token list |
+      awk '{ print $1 }'
+  changed_when: false
+  register: kubeadm_bootstrap_tokens
+
+- name: Generates bootstrap tokens used to join a node to a cluster
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail |
+      kubeadm init phase bootstrap-token |
+      head -n 1 |
+      awk '{ print $NF }'
+  register: kubeadm_generated_bootstrap_token
+  when: >
+    (kubeadm_cluster_cm_infos.resources | length == 0) or
+    (kubeadm_bootstrap_tokens.stdout.split() | length == 1)
+  changed_when: true
+
+- name: Set bootstrap token variables
+  ansible.builtin.set_fact:
+    kubeadm_bootstrap_token: |
+      {{
+        (kubeadm_bootstrap_tokens.stdout.split() | length > 1) |
+        ternary(kubeadm_bootstrap_tokens.stdout.split()[1], kubeadm_generated_bootstrap_token.stdout)
+      }}

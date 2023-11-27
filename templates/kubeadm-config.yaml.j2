@@ -248,11 +248,11 @@ discovery:
 {% if kubeadm_config.apiserver_endpoint is defined %}
     apiServerEndpoint: "{{ (kubeadm_config.apiserver_endpoint | length > 0) | ternary(kubeadm_config.apiserver_endpoint, ansible_default_ipv4.address) }}:{{ (kubeadm_config.apiserver_bind_port | int != 0 ) | ternary(kubeadm_config.apiserver_bind_port, '6443') }}"
 {% endif %}
-{% if kubeadm_config.tokens is defined and kubeadm_config.tokens| length > 0 %}
-    token: "{{ kubeadm_config.tokens[0].token }}"
-{% endif %}
+    token: {{ hostvars[groups['control_planes'][0]]['kubeadm_bootstrap_token'] }}
+    caCertHashes:
+      - "sha256:{{ hostvars[groups['control_planes'][0]]['kubeadm_ca_key'] }}"
 {% if kubeadm_config.join.registration.unsafe_skip_ca_verification is defined and kubeadm_config.join.registration.unsafe_skip_ca_verification %}
-    unsafeSkipCAVerification: true
+    unsafeSkipCAVerification: {{ kubeadm_config.join.registration.unsafe_skip_ca_verification }}
 {% endif %}
 {% endif%}
 {% endif %}

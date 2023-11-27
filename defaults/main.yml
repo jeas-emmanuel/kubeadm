@@ -8,11 +8,16 @@ kubeadm_system_package:
   - python3
   - python3-pip
   - python3-kubernetes
+  - awk
 
 kubeadm_packages:
   - kubectl
   - kubelet=1.28.0-00
   - kubeadm=1.28.0-00
+
+kubeadm_kubectl_users:
+  - name: ubuntu
+    group: ubuntu
 
 kubeadm_kubernetes_version: "v1.27.0"
 
@@ -146,7 +151,7 @@ kubeadm_join_config:
   join:
     registration:
       name: "{{ ansible_hostname }}"
-      unsafe_skip_ca_verification: true
+      unsafe_skip_ca_verification: false
       cri_socket: "{{ kubeadm_container_runtime_socket }}"
       taints: []
       kubelet_extra_args:

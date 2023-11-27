@@ -14,3 +14,4 @@
   kubernetes.core.k8s:
     state: present
     definition: "{{ kubeadm_cni_flannel['content'] | b64decode }}"
+    kubeconfig: "{{ kubeadm_admin_conf_file }}"
