@@ -97,7 +97,7 @@ kubeadm_etcd_config:
 kubeadm_networking_config:
   cluster_network:
     service_subnet: "10.96.0.0/16"
-    pod_subnet: "10.244.0.0/24"
+    pod_subnet: "192.168.0.0/16"
     dns_domain: cluster.local
   apiserver_advertise_address: ""
   apiserver_bind_port: 6443
@@ -161,4 +161,5 @@ kubeadm_join_config:
           value: node
     skip_phases: []
 
-kubeadm_cni_name: "flannel"
+kubeadm_cni_name: "calico"
+kubeadm_cni_calico_version: 3.26.4

@@ -1,0 +1,28 @@
+---
+- name: Get Calico manifests files
+  ansible.builtin.get_url:
+    url: "{{ kubeadm_calico_manifest_url }}"
+    dest: "/tmp/"
+    mode: '0644'
+  loop: "{{ kubeadm_calico_manifests }}"
+  loop_control:
+    loop_var: kubeadm_calico_manifest_url
+
+- name: Get flannel manifest file content
+  ansible.builtin.slurp:
+    src: "/tmp/tigera-operator.yaml"
+  register: kubeadm_cni_calico_operator
+
+- name: Get Calico manifests files content
+  ansible.builtin.slurp:
+    src: "/tmp/custom-resources.yaml"
+  register: kubeadm_cni_calico_cr
+
+- name: Deploy Calico in the cluster
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ item['content'] | b64decode }}"
+    kubeconfig: "{{ kubeadm_admin_conf_file }}"
+  with_items:
+    - "{{ kubeadm_cni_calico_operator }}"
+    - "{{ kubeadm_cni_calico_cr }}"
