@@ -5,7 +5,7 @@
     - name: Kubeadm make a dry-run to compare changes
       become: true
       ansible.builtin.command:
-        cmd: "kubeadm init phase kubelet-start --config {{ kubeadm_config_file }} --dry-run"
+        cmd: "kubeadm join --config {{ kubeadm_config_file }} --dry-run"
       register: kubeadm_kubelet_dry_run
       changed_when: false
     - name: Generate control plane manifests files

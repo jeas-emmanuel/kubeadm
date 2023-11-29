@@ -1,21 +1,21 @@
 ---
-# - name: Validate prerequis
-#   ansible.builtin.include_tasks: requirements.yml
+- name: Validate prerequis
+  ansible.builtin.include_tasks: requirements.yml
 
-# - name: Setup machines
-#   ansible.builtin.include_tasks: "prepare/{{ ansible_os_family | lower }}.yml"
+- name: Setup machines
+  ansible.builtin.include_tasks: "prepare/{{ ansible_os_family | lower }}.yml"
 
-# - name: Setup network
-#   ansible.builtin.include_tasks: prepare/network.yml
+- name: Setup network
+  ansible.builtin.include_tasks: prepare/network.yml
 
 - name: Initialize control plane node
   when: "'control_planes' in group_names"
-  ansible.builtin.include_tasks: control-plane.yml
+  ansible.builtin.include_tasks: control_plane.yml
 
 - name: CA hash key
-  ansible.builtin.include_tasks: ca-hash-key.yml
+  ansible.builtin.include_tasks: ca_hash_key.yml
   when: "inventory_hostname == groups['control_planes'][0]"
 
 - name: Join nodes to the cluster
   when: "'worker_nodes' in group_names"
-  ansible.builtin.include_tasks: worker-node.yml
+  ansible.builtin.include_tasks: worker_node.yml
