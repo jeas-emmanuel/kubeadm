@@ -59,6 +59,8 @@ kubeadm_addons:
 
 kubeadm_cni_flannel_manifest: https://github.com/coreos/flannel/raw/master/Documentation/kube-flannel.yml
 
-kubeadm_calico_manifests:
+kubeadm_cni_calico_manifests:
   - "https://raw.githubusercontent.com/projectcalico/calico/v{{ kubeadm_cni_calico_version }}/manifests/tigera-operator.yaml"
   - "https://raw.githubusercontent.com/projectcalico/calico/v{{ kubeadm_cni_calico_version }}/manifests/custom-resources.yaml"
+
+kubeadm_cni_canal_manifest: "https://raw.githubusercontent.com/projectcalico/calico/v{{ kubeadm_cni_canal_version }}/manifests/canal.yaml"

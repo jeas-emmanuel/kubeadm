@@ -19,3 +19,6 @@
   loop: "{{ kubeadm_network_modules }}"
   loop_control:
     loop_var: kubeadm_network_mod
+
+- name: Apply networks configurations
+  ansible.builtin.meta: flush_handlers

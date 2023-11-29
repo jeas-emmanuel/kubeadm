@@ -4,7 +4,7 @@
     url: "{{ kubeadm_calico_manifest_url }}"
     dest: "/tmp/"
     mode: '0644'
-  loop: "{{ kubeadm_calico_manifests }}"
+  loop: "{{ kubeadm_cni_calico_manifests }}"
   loop_control:
     loop_var: kubeadm_calico_manifest_url
 

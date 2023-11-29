@@ -18,3 +18,7 @@
   ansible.builtin.service:
     name: kubelet
     state: restarted
+
+- name: Set bootstrap token variable
+  ansible.builtin.set_fact:
+    kubeadm_bootstrap_token: "{{ kubeadm_generated_bootstrap_token.stdout_lines | first | split() | last }}"

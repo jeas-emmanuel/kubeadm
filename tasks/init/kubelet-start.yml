@@ -22,4 +22,4 @@
 
 - name: Waiting for kubelet being ready
   ansible.builtin.wait_for:
-    timeout: 45
+    timeout: 60

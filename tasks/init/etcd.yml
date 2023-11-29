@@ -3,6 +3,7 @@
   become: true
   ansible.builtin.file:
     path: "/var/lib/etcd"
+    state: directory
     mode: '0700'
 
 - name: Kubeadm create static Pod manifest file for local etcd

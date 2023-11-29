@@ -1,33 +1,33 @@
 ---
-- name: Configuration file
-  ansible.builtin.include_tasks: configuration-file.yml
+# - name: Configuration file
+#   ansible.builtin.include_tasks: configuration-file.yml
 
-- name: Ensure all pki certificates are generated
-  ansible.builtin.include_tasks: init/certs.yml
+# - name: Ensure all pki certificates are generated
+#   ansible.builtin.include_tasks: init/certs.yml
 
-- name: Generate all kubeconfig files
-  ansible.builtin.include_tasks: init/kubeconfig.yml
+# - name: Generate all kubeconfig files
+#   ansible.builtin.include_tasks: init/kubeconfig.yml
 
-- name: Etcd static local pod
-  ansible.builtin.include_tasks: init/etcd.yml
+# - name: Etcd static local pod
+#   ansible.builtin.include_tasks: init/etcd.yml
 
-- name: Generate all static Pod manifest files
-  ansible.builtin.include_tasks: init/control-plane.yml
+# - name: Generate all static Pod manifest files
+#   ansible.builtin.include_tasks: init/control-plane.yml
 
-- name: Kubelet
-  ansible.builtin.include_tasks: init/kubelet-start.yml
+# - name: Kubelet
+#   ansible.builtin.include_tasks: init/kubelet-start.yml
 
-- name: Uplaod all configuration
-  ansible.builtin.include_tasks: init/upload-config.yml
+# - name: Uplaod all configuration
+#   ansible.builtin.include_tasks: init/upload-config.yml
 
-- name: Mark control plane node
-  ansible.builtin.include_tasks: init/mark-control-plane.yml
+# - name: Mark control plane node
+#   ansible.builtin.include_tasks: init/mark-control-plane.yml
 
-- name: Finalize kubelet setup
-  ansible.builtin.include_tasks: init/kubelet-finalize.yml
+# - name: Finalize kubelet setup
+#   ansible.builtin.include_tasks: init/kubelet-finalize.yml
 
-- name: Install all the addons
-  ansible.builtin.include_tasks: init/addons.yml
+# - name: Install all the addons
+#   ansible.builtin.include_tasks: init/addons.yml
 
 - name: Bootstrap tokens
   ansible.builtin.include_tasks: init/bootstrap-token.yml

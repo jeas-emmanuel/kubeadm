@@ -1,0 +1,17 @@
+---
+- name: Get canal manifest file
+  ansible.builtin.get_url:
+    url: "{{ kubeadm_cni_canal_manifest }}"
+    dest: "/tmp/{{ kubeadm_cni_name }}.yaml"
+    mode: '0644'
+
+- name: Get flannel manifest file content
+  ansible.builtin.slurp:
+    src: "/tmp/{{ kubeadm_cni_name }}.yaml"
+  register: kubeadm_cni_canal
+
+- name: Deploy flannel in the cluster
+  kubernetes.core.k8s:
+    state: present
+    definition: "{{ kubeadm_cni_canal['content'] | b64decode }}"
+    kubeconfig: "{{ kubeadm_admin_conf_file }}"
