@@ -29,14 +29,11 @@
 - name: Install all the addons
   ansible.builtin.include_tasks: init/addons.yml
 
-- name: Bootstrap tokens
-  ansible.builtin.include_tasks: init/bootstrap_token.yml
+- name: Deploy cni add-on
+  ansible.builtin.include_tasks: "cni/{{ kubeadm_cni_name }}.yml"
 
 - name: Configure kubectl
   ansible.builtin.include_tasks: configure_kubectl.yml
   loop: "{{ kubeadm_kubectl_users }}"
   loop_control:
     loop_var: kubeadm_kubectl_user
-
-- name: Deploy cni add-on
-  ansible.builtin.include_tasks: "cni/{{ kubeadm_cni_name }}.yml"

@@ -25,7 +25,7 @@
   register: kubeadm_generated_bootstrap_token
   when: >
     (kubeadm_cluster_cm_infos.resources | length == 0) or
-    (kubeadm_bootstrap_tokens.stdout_lines | length == 1)
+    (kubeadm_bootstrap_tokens.stdout_lines | length == 0)
   changed_when: true
 
 - name: Set token

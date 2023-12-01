@@ -1,0 +1,25 @@
+---
+- name: Bootstrap tokens
+  ansible.builtin.include_tasks: init/bootstrap_token.yml
+
+- name: Get control plane CA hash key
+  ansible.builtin.shell:
+    cmd: |
+      set -o pipefail |
+      openssl x509 -pubkey -in /etc/kubernetes/pki/ca.crt | openssl rsa -pubin -outform der 2>/dev/null | openssl dgst -sha256 -hex | sed 's/^.* //'
+  register: kubeadm_ca_hash_key
+  changed_when: false
+
+- name: Set CA hash key for other nodes
+  ansible.builtin.set_fact:
+    kubeadm_ca_key: "{{ kubeadm_ca_hash_key.stdout }}"
+
+- name: Check if node already joined cluster
+  kubernetes.core.k8s_info:
+    kind: Node
+    kubeconfig: "{{ kubeadm_admin_conf_file }}"
+  register: kubeadm_nodes_list
+
+- name: Set list of node in the cluster
+  ansible.builtin.set_fact:
+    kubeadm_joined_nodes: "{{ kubeadm_nodes_list | community.general.json_query('resources[*].metadata.name') }}"

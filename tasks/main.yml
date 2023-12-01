@@ -12,8 +12,8 @@
   when: "'control_planes' in group_names"
   ansible.builtin.include_tasks: control_plane.yml
 
-- name: CA hash key
-  ansible.builtin.include_tasks: ca_hash_key.yml
+- name: Prepare worker node to join the cluster
+  ansible.builtin.include_tasks: prepare_worker_join.yml
   when: "inventory_hostname == groups['control_planes'][0]"
 
 - name: Join nodes to the cluster

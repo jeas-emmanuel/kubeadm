@@ -1,0 +1,8 @@
+---
+- name: Worker node join
+  become: true
+  ansible.builtin.command:
+    cmd: "kubeadm join --config {{ kubeadm_config_file }}"
+  register: kubeadm_kubelet_dry_run
+  changed_when: true
+  when: "ansible_hostname not in hostvars[groups['control_planes'][0]]['kubeadm_joined_nodes']"

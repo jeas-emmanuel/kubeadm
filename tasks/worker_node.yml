@@ -1,3 +1,6 @@
 ---
 - name: Configuration file
-  ansible.builtin.include_tasks: configuration-file.yml
+  ansible.builtin.include_tasks: configuration_file.yml
+
+- name: Worker node join
+  ansible.builtin.include_tasks: join/worker_join.yml
