@@ -94,7 +94,6 @@ kubeadm_image_repository: registry.k8s.io
 ```
 
 Kubeadm configuration file (`defaults/main.yml`)
-
 ```yaml
 kubeadm_bootsrap_tokens_config:
   tokens:
@@ -106,7 +105,10 @@ kubeadm_bootsrap_tokens_config:
         - authentication
       groups:
         - system:bootstrappers:kubeadm:default-node-token
+```
 
+kubeadm configuration for nodeRegistration (`defaults/main.yml`).
+```yaml
 kubeadm_node_registration_config:
   taints:
     - key: "kubeadmNode"
@@ -121,7 +123,10 @@ kubeadm_node_registration_config:
   skip_phases: []
   image_pull_policy: IfNotPresent
   certificate_key: ""
+```
 
+kubeadm configuration for etcd (`defaults/main.yml`).
+```yaml
 kubeadm_etcd_config:
   local_etcd:
     image_repo: "{{ kubeadm_default_image_repo | default("registry.k8s.io") }}"
@@ -139,7 +144,10 @@ kubeadm_etcd_config:
     # ca_file: "/etcd/kubernetes/pki/etcd/etcd-ca.crt"
     # cert_file: "/etcd/kubernetes/pki/etcd/etcd.crt"
     # key_file: "/etcd/kubernetes/pki/etcd/etcd.key"
+```
 
+kubeadm configuration for the cluster's network (`defaults/main.yml`).
+```yaml
 kubeadm_networking_config:
   cluster_network:
     service_subnet: "10.96.0.0/16"
@@ -148,7 +156,10 @@ kubeadm_networking_config:
   apiserver_advertise_address: ""
   apiserver_bind_port: 6443
   apiserver_endpoint: ""
+```
 
+kubadm configuration for kubernetes apiserver (`defaults/main.yml`).
+```yaml
 kubeadm_apiserver_config:
   apiserver:
     extra_args:
@@ -162,7 +173,10 @@ kubeadm_apiserver_config:
       #   path_type: DirectoryOrCreate
     cert_sans: []
     timeout_for_controlplane: "4m0s"
+```
 
+kubeadm configuration for kubernetes controller manager (`defaults/main.yml`).
+```yaml
 kubeadm_controllermanager_config:
   controllermanager:
     extra_args:
@@ -174,7 +188,10 @@ kubeadm_controllermanager_config:
       #   mount_path: "/etc/"
       #   read_only: true
       #   path_type: Directory
+```
 
+kubeadm configuration for kubernetes scheduler (`defaults/main.yml`).
+```yaml
 kubeadm_scheduler_config:
   scheduler:
     extra_args:
@@ -186,7 +203,10 @@ kubeadm_scheduler_config:
       #   mount_path: "/etc/"
       #   read_only: true
       #   path_type: Directory
+```
 
+kubeadm configuration for kubelet (`defaults/main.yml`).
+```yaml
 kubeadm_kubelet_config:
   kubelet:
     cgroup_driver: systemd
