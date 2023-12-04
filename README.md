@@ -48,7 +48,7 @@ kubernetes version  (`defaults/main.yml`).
 kubeadm_kubernetes_version: "v1.27.0"
 ```
 
-system users for kubectl (`defaults/main.yml`).
+system users for kubectl. kubectl cli will be configured for those users (`defaults/main.yml`).
 ```yaml
 kubeadm_kubectl_users:
   - name: ubuntu
