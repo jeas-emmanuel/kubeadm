@@ -137,12 +137,6 @@ kubeadm_scheduler_config:
       #   read_only: true
       #   path_type: Directory
 
-kubeadm_kubelet_config:
-  kubelet:
-    cgroup_driver: systemd
-
-kubeadm_kubeproxy_config: []
-
 kubeadm_join_config:
   join:
     registration:
@@ -156,6 +150,10 @@ kubeadm_join_config:
         - key: node-labels
           value: node
     skip_phases: []
+
+kubeadm_kubelet_config:
+  kubelet:
+    cgroup_driver: systemd
 
 kubeadm_cni_name: "canal"
 kubeadm_cni_calico_version: 3.26.4

@@ -205,11 +205,35 @@ kubeadm_scheduler_config:
       #   path_type: Directory
 ```
 
+kubeadm configuration for node to join the cluster(`defaults/main.yml`).
+```yaml
+kubeadm_join_config:
+  join:
+    registration:
+      name: "{{ ansible_hostname }}"
+      unsafe_skip_ca_verification: false
+      cri_socket: "{{ kubeadm_container_runtime_socket }}"
+      taints: []
+      kubelet_extra_args:
+        - key: enable-controller-attach-detach
+          value: false
+        - key: node-labels
+          value: node
+    skip_phases: []
+```
+
 kubeadm configuration for kubelet (`defaults/main.yml`).
 ```yaml
 kubeadm_kubelet_config:
   kubelet:
     cgroup_driver: systemd
+```
+
+kubeadm configuration for container network interface (cni) (`defaults/main.yml`).
+```yaml
+kubeadm_cni_name: "canal"
+kubeadm_cni_calico_version: 3.26.4
+kubeadm_cni_canal_version: 3.26.4
 ```
 
 ### Role variables in `vars/main.yml`
