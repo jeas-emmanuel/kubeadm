@@ -8,6 +8,12 @@ kubeadm_hardwares_min_requirements:
   ram: 2
   cpu: 2
 
+kubeadm_google_signing_key_url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+kubeadm_google_signing_key: "/etc/apt/keyrings/kubernetes-archive-keyring.gpg"
+
+kubeadm_k8s_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+kubeadm_k8s_apt_repo_file: "/etc/apt/sources.list.d/kubernetes.list"
+
 kubeadm_config_apiversion: kubeadm.k8s.io/v1beta3
 kubeadm_config_init_apiversion: "{{ kubeadm_config_apiversion }}"
 kubeadm_config_kubelet_apiversion: "kubelet.config.k8s.io/v1beta1"

@@ -18,20 +18,10 @@ $ ansible-galaxy collection install community.general
 
 Role Variables
 --------------
-variables for compatible OS distros (`vars/main.yml`).
-```yaml
-kubeadm_compatible_os_distros:
-  - debian
-  - redhat
-```
+This section describe all settable variables for this role
 
-variables for minimum hardawares requirements (`vars/main.yml`)
-
-```yaml
-kubeadm_hardwares_min_requirements:
-  ram: 2
-  cpu: 2
-```
+### Role variables in `default/main.yml`
+---------------------------------------
 
 systems packages variables (`defaults/main.yml`).
 ```yaml
@@ -39,14 +29,30 @@ kubeadm_system_package:
   - apt-transport-https
   - ca-certificates
   - curl
+  - jq
+  - python3
+  - python3-pip
+  - python3-kubernetes
 ```
 
-kubernetes packages and versions (`defaults/main.yml`).
+kubeadm required packages and versions (`defaults/main.yml`).
 ```yaml
 kubeadm_packages:
-  - kubeadm=1.27.3-00
-  - kubelet=1.27.3-00
-  - kubectl=1.27.3-00
+  - kubectl
+  - kubelet=1.28.0-00
+  - kubeadm=1.28.0-00
+```
+
+kubernetes version  (`defaults/main.yml`).
+```yaml
+kubeadm_kubernetes_version: "v1.27.0"
+```
+
+system users for kubectl (`defaults/main.yml`).
+```yaml
+kubeadm_kubectl_users:
+  - name: ubuntu
+    group: ubuntu
 ```
 
 kubernetes networks modules (`defaults/main.yml`).
@@ -56,7 +62,7 @@ kubeadm_network_modules:
   - br_netfilter
 ```
 
-kubernetes networks parameters (`defaults/main.yml`).
+kubernetes required network modules parameters (`defaults/main.yml`).
 ```yaml
 kubeadm_network_parameters:
   - key: net.bridge.bridge-nf-call-iptables
@@ -67,38 +73,28 @@ kubeadm_network_parameters:
     value: 1
 ```
 
-kubeadm installation parameters (`defaults/main.yml`)
+kubeadm configuration file (`defaults/main.yml`).
 ```yaml
-kubeadm_google_signing_key_url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-kubeadm_google_signing_key: "/etc/apt/keyrings/kubernetes-archive-keyring.gpg"
-
-kubeadm_k8s_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
-kubeadm_k8s_apt_repo_file: "/etc/apt/sources.list.d/kubernetes.list"
-```
-
-kubeadm configuration's file api (`defaults/main.yml`)
-```yaml
-kubeadm_config_apiversion: kubeadm.k8s.io/v1beta3
-kubeadm_config_kind_init: InitConfiguration
-kubeadm_config_kind_cluster: ClusterConfiguration
-kubeadm_config_kind_kubelet: KubeletConfiguration
-kubeadm_config_kind_kubeproxy: KubeProxyConfiguration
-kubeadm_config_kind_join: JoinConfiguration
-```
-
-params for kubeadm configuration file (`defaults/main.yml`)
-```yaml
-kubeadm_use_config_file: true
-kubeadm_upload_certs: false
-kubeadm_use_external_etcd: false
-```
-
-```yaml
-kubeadm_default_image_repo: registry.k8s.io
 kubeadm_config_file: /tmp/kubeadm-config.yaml
 ```
 
-### Kubeadm configuration file (`defaults/main.yml`)
+kubernetes configuration directory (`defaults/main.yml`).
+```yaml
+kubeadm_dir: "/etc/kubernetes"
+```
+
+kubernetes pki directory (`defaults/main.yml`).
+```yaml
+kubeadm_certificates_dir: "{{ kubeadm_dir }}/pki"
+```
+
+kubeadm registry variable (`defaults/main.yml`)
+```yaml
+kubeadm_image_repository: registry.k8s.io
+```
+
+Kubeadm configuration file (`defaults/main.yml`)
+
 ```yaml
 kubeadm_bootsrap_tokens_config:
   tokens:
@@ -195,6 +191,44 @@ kubeadm_kubelet_config:
   kubelet:
     cgroup_driver: systemd
 ```
+
+### Role variables in `vars/main.yml`
+------------------------------------
+
+variables for compatible OS distros (`vars/main.yml`).
+```yaml
+kubeadm_compatible_os_distros:
+  - debian
+  - redhat
+```
+
+variables for minimum hardawares requirements (`vars/main.yml`)
+
+```yaml
+kubeadm_hardwares_min_requirements:
+  ram: 2
+  cpu: 2
+```
+
+kubeadm installation parameters (`vars/main.yml`)
+```yaml
+kubeadm_google_signing_key_url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+kubeadm_google_signing_key: "/etc/apt/keyrings/kubernetes-archive-keyring.gpg"
+
+kubeadm_k8s_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+kubeadm_k8s_apt_repo_file: "/etc/apt/sources.list.d/kubernetes.list"
+```
+
+kubeadm configuration's file api (`vars/main.yml`)
+```yaml
+kubeadm_config_apiversion: kubeadm.k8s.io/v1beta3
+kubeadm_config_kind_init: InitConfiguration
+kubeadm_config_kind_cluster: ClusterConfiguration
+kubeadm_config_kind_kubelet: KubeletConfiguration
+kubeadm_config_kind_kubeproxy: KubeProxyConfiguration
+kubeadm_config_kind_join: JoinConfiguration
+```
+
 
 A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
 

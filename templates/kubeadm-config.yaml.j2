@@ -188,8 +188,8 @@ scheduler:
 {% endfor %}
 {% endif%}
 {%- endif -%}
-certificatesDir: {{ kubeadm_certificates_dir | default('/etc/kubernetes/pki') }}
-imageRepository: {{ kubeadm_image_repository | default('registry.k8s.io') }}
+certificatesDir: {{ kubeadm_certificates_dir }}
+imageRepository: {{ kubeadm_image_repository }}
 clusterName: {{ kubeadm_cluster_name | default('default-cluster') }}
 
 {% if kubeadm_config.kubelet is defined and kubeadm_config.kubelet | length > 0 -%}

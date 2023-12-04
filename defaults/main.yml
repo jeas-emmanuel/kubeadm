@@ -32,17 +32,14 @@ kubeadm_network_parameters:
   - key: net.ipv4.ip_forward
     value: 1
 
-kubeadm_google_signing_key_url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
-kubeadm_google_signing_key: "/etc/apt/keyrings/kubernetes-archive-keyring.gpg"
+kubeadm_config_file: /tmp/kubeadm-config.yaml
+kubeadm_dir: "/etc/kubernetes"
+kubeadm_certificates_dir: "{{ kubeadm_dir }}/pki"
 
-kubeadm_k8s_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
-kubeadm_k8s_apt_repo_file: "/etc/apt/sources.list.d/kubernetes.list"
+kubeadm_image_repository: "registry.k8s.io"
 
 kubeadm_upload_certs: false
 kubeadm_use_external_etcd: false
-
-kubeadm_config_file: /tmp/kubeadm-config.yaml
-kubeadm_dir: "/etc/kubernetes"
 
 kubeadm_container_runtime_socket: "unix:///run/containerd/containerd.sock"
 
