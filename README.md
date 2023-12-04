@@ -265,16 +265,30 @@ kubeadm_k8s_apt_repo_file: "/etc/apt/sources.list.d/kubernetes.list"
 
 kubeadm configuration's file api (`vars/main.yml`)
 ```yaml
+kubeadm_config_array: []
+kubeadm_config: |
+  {{
+    kubeadm_config_array |
+    combine(kubeadm_bootsrap_tokens_config, list_merge='append') |
+    combine(kubeadm_node_registration_config, list_merge='append') |
+    combine(kubeadm_etcd_config, list_merge='append') |
+    combine(kubeadm_networking_config, list_merge='append') |
+    combine(kubeadm_apiserver_config, list_merge='append') |
+    combine(kubeadm_controllermanager_config, list_merge='append') |
+    combine(kubeadm_scheduler_config, list_merge='append') |
+    combine(kubeadm_kubelet_config, list_merge='append') |
+    combine(kubeadm_join_config, list_merge='append')
+  }}
 kubeadm_config_apiversion: kubeadm.k8s.io/v1beta3
+kubeadm_config_init_apiversion: "{{ kubeadm_config_apiversion }}"
+kubeadm_config_kubelet_apiversion: "kubelet.config.k8s.io/v1beta1"
+kubeadm_config_kubeproxy_apiversion: "kubeproxy.config.k8s.io/v1alpha1"
 kubeadm_config_kind_init: InitConfiguration
 kubeadm_config_kind_cluster: ClusterConfiguration
 kubeadm_config_kind_kubelet: KubeletConfiguration
 kubeadm_config_kind_kubeproxy: KubeProxyConfiguration
 kubeadm_config_kind_join: JoinConfiguration
 ```
-
-
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
 
 Dependencies
 ------------
