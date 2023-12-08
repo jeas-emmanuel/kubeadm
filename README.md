@@ -10,7 +10,7 @@ to learn more about kubeadm, follow the official doc: [kubeadm docs](https://kub
 Requirements
 ------------
 The module `community.general.modprobe` is called in this role.
-in order to make this works properly, you have to install the `community.general`collection of ansible. the command to achieve this is right below.
+in order to make this works properly, you have to install the `community.general` ansible's collection. The command to achieve this is right below.
 
 ```shell
 $ ansible-galaxy collection install community.general
@@ -35,17 +35,35 @@ kubeadm_system_package:
   - python3-kubernetes
 ```
 
+kubernetes version  (`defaults/main.yml`).
+
+Kubernetes versions are expressed as x.y.z, where x is the major version, y is the minor version, and z is the patch version. For example kubeadm's version can be ```v1.27.0```.
+
+```yaml
+kubeadm_kubernetes_version: "v1.27.0"
+```
+
 kubeadm required packages and versions (`defaults/main.yml`).
+
+You have to choose the right version of these tools to make them work fine.
+You can check the description below or visit the offical kubernetes's documentation about version [Version Skew Policy](https://kubernetes.io/releases/version-skew-policy/)
+
+**kubelet**
+
+-  must not be newer than ```kubernetes_version```.
+- may be up to three minor versions older than ```kubernetes_version```.
+
+For example, if ```kubernetes_version``` is ```1.28.0```, ```kubelet``` version can be ```1.28.0``` ```1.27.0``` ```1.26.0``` and ```1.25.0```.
+
+**kubectl**
+
+- ```kubectl``` is supported within one minor version (older or newer) of ```kubernetes_version```.
+
 ```yaml
 kubeadm_packages:
   - kubectl
   - kubelet=1.28.0-00
   - kubeadm=1.28.0-00
-```
-
-kubernetes version  (`defaults/main.yml`).
-```yaml
-kubeadm_kubernetes_version: "v1.27.0"
 ```
 
 system users for kubectl. kubectl cli will be configured for those users (`defaults/main.yml`).
@@ -56,13 +74,15 @@ kubeadm_kubectl_users:
 ```
 
 kubernetes networks modules (`defaults/main.yml`).
+
+Thes modules are loaded to configure IPV4 bridge on all node.
+
 ```yaml
 kubeadm_network_modules:
   - overlay
   - br_netfilter
 ```
 
-kubernetes required network modules parameters (`defaults/main.yml`).
 ```yaml
 kubeadm_network_parameters:
   - key: net.bridge.bridge-nf-call-iptables
@@ -74,11 +94,15 @@ kubeadm_network_parameters:
 ```
 
 kubeadm configuration file (`defaults/main.yml`).
+
+The path where the configuration's file of kubeadm will be dropped.
+
 ```yaml
 kubeadm_config_file: /tmp/kubeadm-config.yaml
 ```
 
 kubernetes configuration directory (`defaults/main.yml`).
+
 ```yaml
 kubeadm_dir: "/etc/kubernetes"
 ```
