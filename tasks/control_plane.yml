@@ -1,6 +1,6 @@
 ---
 - name: Configuration file
-  ansible.builtin.include_tasks: configuration_file.yml
+  ansible.builtin.include_tasks: setup/configuration_file.yml
 
 - name: Ensure all pki certificates are generated
   ansible.builtin.include_tasks: init/certs.yml
@@ -33,7 +33,7 @@
   ansible.builtin.include_tasks: "cni/{{ kubeadm_cni_name }}.yml"
 
 - name: Configure kubectl
-  ansible.builtin.include_tasks: configure_kubectl.yml
+  ansible.builtin.include_tasks: setup/configure_kubectl.yml
   loop: "{{ kubeadm_kubectl_users }}"
   loop_control:
     loop_var: kubeadm_kubectl_user

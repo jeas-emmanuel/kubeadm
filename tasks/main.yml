@@ -1,4 +1,7 @@
 ---
+- name: Include specific OS Distro variables
+  ansible.builtin.include_vars: "{{ ansible_os_family | lower }}.yml"
+
 - name: Validate prerequis
   ansible.builtin.include_tasks: prepare/requirements.yml
 
@@ -10,7 +13,7 @@
 
 - name: Initialize control plane node
   when: "'control_planes' in group_names"
-  ansible.builtin.include_tasks: setup/control_plane.yml
+  ansible.builtin.include_tasks: control_plane.yml
 
 - name: Prepare worker node to join the cluster
   ansible.builtin.include_tasks: setup/prepare_worker_join.yml
@@ -18,4 +21,4 @@
 
 - name: Join nodes to the cluster
   when: "'worker_nodes' in group_names"
-  ansible.builtin.include_tasks: setup/worker_node.yml
+  ansible.builtin.include_tasks: worker_node.yml

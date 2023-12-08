@@ -4,3 +4,7 @@
     src: kubeadm-config.yaml.j2
     dest: "{{ kubeadm_config_file }}"
     mode: "0644"
+  notify: Restart kubelet
+
+- name: Restart kubelet
+  ansible.builtin.meta: flush_handlers

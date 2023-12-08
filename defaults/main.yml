@@ -9,16 +9,11 @@ kubeadm_system_package:
   - python3-pip
   - python3-kubernetes
 
-kubeadm_packages:
-  - kubectl
-  - kubelet=1.28.0-00
-  - kubeadm=1.28.0-00
-
 kubeadm_kubectl_users:
   - name: ubuntu
     group: ubuntu
 
-kubeadm_kubernetes_version: "v1.27.0"
+kubeadm_kubernetes_version: "v1.28.0"
 
 kubeadm_network_modules:
   - overlay

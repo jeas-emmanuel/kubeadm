@@ -1,0 +1,11 @@
+---
+kubeadm_packages:
+  - kubectl
+  - kubelet=1.28.0-00
+  - kubeadm=1.28.0-00
+
+kubeadm_google_signing_key_url: "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
+kubeadm_google_signing_key: "/etc/apt/keyrings/kubernetes-archive-keyring.gpg"
+
+kubeadm_k8s_apt_repo: "deb https://apt.kubernetes.io/ kubernetes-xenial main"
+kubeadm_k8s_apt_repo_file: "/etc/apt/sources.list.d/kubernetes.list"
