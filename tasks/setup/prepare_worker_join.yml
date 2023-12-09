@@ -15,11 +15,11 @@
     kubeadm_ca_key: "{{ kubeadm_ca_hash_key.stdout }}"
 
 - name: Check if node already joined cluster
-  kubernetes.core.k8s_info:
-    kind: Node
-    kubeconfig: "{{ kubeadm_admin_conf_file }}"
+  ansible.builtin.command:
+    cmd: "kubectl get nodes --kubeconfig={{ kubeadm_admin_conf_file }} -o custom-columns=NAME:.metadata.name"
   register: kubeadm_nodes_list
+  changed_when: false
 
 - name: Set list of node in the cluster
   ansible.builtin.set_fact:
-    kubeadm_joined_nodes: "{{ kubeadm_nodes_list | community.general.json_query('resources[*].metadata.name') }}"
+    kubeadm_joined_nodes: "{{ kubeadm_nodes_list.stdout_lines }}"

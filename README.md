@@ -29,10 +29,6 @@ kubeadm_system_package:
   - apt-transport-https
   - ca-certificates
   - curl
-  - jq
-  - python3
-  - python3-pip
-  - python3-kubernetes
 ```
 
 kubernetes version  (`defaults/main.yml`).
