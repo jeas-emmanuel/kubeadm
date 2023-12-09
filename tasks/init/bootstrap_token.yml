@@ -1,12 +1,9 @@
 ---
 - name: Check if cluster-info ConfigMap exists
-  kubernetes.core.k8s_info:
-    api_version: v1
-    kind: ConfigMap
-    name: cluster-info
-    namespace: kube-public
-    kubeconfig: "{{ kubeadm_admin_conf_file }}"
+  ansible.builtin.command:
+    cmd: "kubectl get configmap -n kube-public --kubeconfig={{ kubeadm_admin_conf_file }} -o custom-columns=NAME:.metadata.name"
   register: kubeadm_cluster_cm_infos
+  changed_when: false
 
 - name: Check if bootstrap token exists
   ansible.builtin.shell:
@@ -24,7 +21,7 @@
     cmd: kubeadm init phase bootstrap-token
   register: kubeadm_generated_bootstrap_token
   when: >
-    (kubeadm_cluster_cm_infos.resources | length == 0) or
+    ("cluster-info" not in kubeadm_cluster_cm_infos.stdout_lines) or
     (kubeadm_bootstrap_tokens.stdout_lines | length == 0)
   changed_when: true
 
