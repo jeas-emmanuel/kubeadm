@@ -23,6 +23,9 @@
 - name: Mark control plane node
   ansible.builtin.include_tasks: init/mark_control_plane.yml
 
+- name: Bootstrap tokens
+  ansible.builtin.include_tasks: init/bootstrap_token.yml
+
 - name: Finalize kubelet setup
   ansible.builtin.include_tasks: init/kubelet_finalize.yml
 

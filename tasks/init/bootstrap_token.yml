@@ -21,7 +21,7 @@
     cmd: kubeadm init phase bootstrap-token
   register: kubeadm_generated_bootstrap_token
   when: >
-    ("cluster-info" not in kubeadm_cluster_cm_infos.stdout_lines) or
+    ("cluster-infoo" not in kubeadm_cluster_cm_infos.stdout_lines) or
     (kubeadm_bootstrap_tokens.stdout_lines | length == 0)
   changed_when: true
 

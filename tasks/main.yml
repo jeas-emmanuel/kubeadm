@@ -16,7 +16,7 @@
   ansible.builtin.include_tasks: control_plane.yml
 
 - name: Prepare worker node to join the cluster
-  ansible.builtin.include_tasks: setup/prepare_worker_join.yml
+  ansible.builtin.include_tasks: setup/prepare_join.yml
   when: "inventory_hostname == groups['control_planes'][0]"
 
 - name: Join nodes to the cluster

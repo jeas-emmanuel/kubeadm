@@ -11,7 +11,8 @@
   register: kubeadm_cni_canal
 
 - name: Deploy canal in the cluster
-  kubernetes.core.k8s:
-    state: present
-    definition: "{{ kubeadm_cni_canal['content'] | b64decode }}"
-    kubeconfig: "{{ kubeadm_admin_conf_file }}"
+  ansible.builtin.command:
+    cmd: "kubecl create -f /tmp/{{ kubeadm_cni_name }}.yaml --kubeconfig={{ kubeadm_admin_conf_file }}"
+  register: kubeadm_deploy_canal
+  changed_when: '"created" in kubeadm_deploy_canal.stdout_lines'
+  failed_when: false

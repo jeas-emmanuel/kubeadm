@@ -1,7 +1,4 @@
 ---
-- name: Bootstrap tokens
-  ansible.builtin.include_tasks: init/bootstrap_token.yml
-
 - name: Get control plane CA hash key
   ansible.builtin.shell:
     cmd: |
