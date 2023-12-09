@@ -9,11 +9,6 @@
   loop_control:
     loop_var: kubeadm_sys_pkg
 
-- name: Install PyYAML
-  ansible.builtin.pip:
-    name: kubernetes>12.0.0
-    executable: pip3
-
 - name: Google APT repository
   become: true
   block:
