@@ -4,3 +4,8 @@
 
 - name: Worker node join
   ansible.builtin.include_tasks: join/worker_join.yml
+
+- name: Ensure worker nodes are Ready
+  ansible.builtin.include_tasks: check/readiness.yml
+  vars:
+    kubeadm_node: "{{ ansible_hostname }}"

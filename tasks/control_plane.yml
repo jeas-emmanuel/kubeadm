@@ -40,3 +40,8 @@
   loop: "{{ kubeadm_kubectl_users }}"
   loop_control:
     loop_var: kubeadm_kubectl_user
+
+- name: Ensure control planes are Ready
+  ansible.builtin.include_tasks: check/readiness.yml
+  vars:
+    kubeadm_node: "{{ ansible_hostname }}"

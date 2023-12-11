@@ -1,0 +1,11 @@
+---
+- name: Wait until node become Ready
+  become: true
+  delegate_to: "{{ groups['control_planes'][0] }}"
+  ansible.builtin.command:
+    cmd: "kubectl get node {{ kubeadm_node }} --kubeconfig={{ kubeadm_admin_conf_file }} -o custom-columns=STATUS:.status.conditions[-1].type"
+  changed_when: false
+  register: kubeadm_node_state
+  retries: 10
+  delay: 10
+  until: '"Ready" in kubeadm_node_state.stdout_lines'
