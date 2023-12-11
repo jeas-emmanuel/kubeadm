@@ -7,6 +7,8 @@ to learn more about kubeadm, follow the official doc: [kubeadm docs](https://kub
 
 **NOTE**: **Be sure you have read at least the `Requirements`and `Dependencies`README's sections before using the role**.
 
+**This role has been tested on Ubuntu 20.04.5 LTS. I'm working to get a multi-ditros role 😁**
+
 Requirements
 ------------
 The module `community.general.modprobe` is called in this role.
